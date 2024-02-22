@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link rel="stylesheet" href="Menu_style.css">
+</head>
+
+<body>
+    <div id="sidebar">
+    </div>
+
+    <div id="main">
+        <h2 style="text-align: center;">Products</h2>
+        <div id="products"></div>
+    </div>
+
+    <div id="cart">
+        <h2>Cart</h2>
+        <ul id="cartItems"></ul>
+        <p>Total: <span id="totalPrice">0</span> kr</p>
+        <button onclick="clearCart()">Empty</button>
+        <button onclick="placeOrder()" id="orderButton">Order</button>
+    </div>
+
+    <script src="Menu_script.js"></script>
+</body>
+
+</html>
