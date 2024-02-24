@@ -1,6 +1,6 @@
 // Purpose: To create a menu for the restaurant and allow the user to add items to the cart and place an order.
 
-import { DB } from "./model";
+import { DB } from "./model.js";
 
 // Initialize an empty shopping cart array
 let cart = [];
