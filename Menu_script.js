@@ -16,18 +16,7 @@ function filterCategory(category) {
   );
 
   // Iterate through filtered products and create elements for each
-  filteredProducts.forEach((product) => {
-    const div = document.createElement("div");
-    div.textContent = `${product.name} - ${product.price}kr`;
-
-    // Add an event handler to add the product to the cart when clicked
-    div.onclick = function () {
-      addToCart(product.name, product.price);
-    };
-
-    // Append the product element to the products display
-    productsDiv.appendChild(div);
-  });
+  displayFilteredProducts(filteredProducts);
 }
 
 // Function to display all products when the page is loaded
@@ -72,16 +61,8 @@ function filterGlutenFree() {
   const sortedProducts = filteredProducts.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
-  sortedProducts.forEach((product) => {
-    const div = document.createElement("div");
-    div.textContent = `${product.name} - ${product.price}kr`;
 
-    div.onclick = function () {
-      addToCart(product.name, product.price);
-    };
-
-    productsDiv.appendChild(div);
-  });
+  displayFilteredProducts(sortedProducts);
 }
 document.getElementById("gluten").addEventListener("change", filterGlutenFree);
 
@@ -101,16 +82,7 @@ function filterTanninFree() {
     a.name.localeCompare(b.name)
   );
 
-  sortedProducts.forEach((product) => {
-    const div = document.createElement("div");
-    div.textContent = `${product.name} - ${product.price}kr`;
-
-    div.onclick = function () {
-      addToCart(product.name, product.price);
-    };
-
-    productsDiv.appendChild(div);
-  });
+  displayFilteredProducts(sortedProducts);
 }
 document.getElementById("tannin").addEventListener("change", filterTanninFree);
 
@@ -124,13 +96,48 @@ function searchProducts() {
     product.name.toLocaleLowerCase().includes(searchInput);
   });
 
-  displaySearchedProducts(filteredProducts);
+  displayFilteredProducts(filteredProducts);
 }
-// Helper function to display searched products
-function displaySearchedProducts(products) {
-  const productsDiv = document.getElementById("products");
+document.getElementById("search-bar").addEventListener("input", searchProducts);
 
-  productsDiv.forEach((product) => {
+function sortedProducts() {
+  const sortBy = document.getElementById("sortby").value;
+  let sortedProducts;
+
+  switch (sortBy) {
+    case "price_low_high":
+      sortedProducts = DB.products.sort((a, b) => a.price - b.price);
+      break;
+    case "price_high_low":
+      sortedProducts = DB.products.sort((a, b) => b.price - a.price);
+      break;
+    case "newest":
+      sortedProducts = DB.products.sort(
+        (a, b) =>
+          new Date(b.introduced.substring(0, 4)) -
+          new Date(a.introduced.substring(0, 4))
+      );
+      break;
+    case "oldest":
+      sortedProducts = DB.products.sort(
+        (a, b) =>
+          new Date(a.introduced.substring(0, 4)) -
+          new Date(b.introduced.substring(0, 4))
+      );
+      break;
+    default:
+      sortedProducts = DB.products;
+      break;
+  }
+  displayFilteredProducts(sortedProducts);
+}
+document.getElementById("sortby").addEventListener("change", sortedProducts);
+
+function displayFilteredProducts(products) {
+  const productsDiv = document.getElementById("products");
+  productsDiv.innerHTML = ""; // 清除之前的产品显示
+
+  products.forEach((product) => {
     const div = document.createElement("div");
     div.textContent = `${product.name} - ${product.price}kr`;
 
@@ -141,7 +148,6 @@ function displaySearchedProducts(products) {
     productsDiv.appendChild(div);
   });
 }
-document.getElementById("search-bar").addEventListener("input", searchProducts);
 
 // Function to generate the category list
 function generateCategories() {
