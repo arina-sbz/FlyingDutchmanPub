@@ -64,11 +64,11 @@ function filterGlutenFree() {
 
   const isGlutenFreeChecked = document.getElementById("gluten").checked;
 
-  const filteredProducts = DB.products.filter(product => {
+  const filteredProducts = DB.products.filter((product) => {
     const meetsGlutenFree = isGlutenFreeChecked ? product.gluten === 0 : true;
     return meetsGlutenFree;
   });
-  
+
   const sortedProducts = filteredProducts.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
@@ -82,7 +82,6 @@ function filterGlutenFree() {
 
     productsDiv.appendChild(div);
   });
-
 }
 document.getElementById("gluten").addEventListener("change", filterGlutenFree);
 
@@ -93,11 +92,11 @@ function filterTanninFree() {
 
   const isTanninFreeChecked = document.getElementById("tannin").checked;
 
-  const filteredProducts = DB.products.filter(product => {
+  const filteredProducts = DB.products.filter((product) => {
     const meetsTanninFree = isTanninFreeChecked ? product.tannin === 0 : true;
     return meetsTanninFree;
   });
-  
+
   const sortedProducts = filteredProducts.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
@@ -112,11 +111,39 @@ function filterTanninFree() {
 
     productsDiv.appendChild(div);
   });
-
 }
 document.getElementById("tannin").addEventListener("change", filterTanninFree);
 
+// Function to search for products
+function searchProducts() {
+  const searchInput = document.getElementById("search-bar").value.toLowerCase();
+  const productsDiv = document.getElementById("products");
+  productsDiv.innerHTML = "";
 
+  const filteredProducts = DB.products.filter((product) => {
+    product.name.toLocaleLowerCase().includes(searchInput);
+  });
+
+  displaySearchedProducts(filteredProducts);
+}
+// Helper function to display searched products
+function displaySearchedProducts(products) {
+  const productsDiv = document.getElementById("products");
+
+  productsDiv.forEach((product) => {
+    const div = document.createElement("div");
+    div.textContent = `${product.name} - ${product.price}kr`;
+
+    div.onclick = function () {
+      addToCart(product.name, product.price);
+    };
+
+    productsDiv.appendChild(div);
+  });
+}
+document.getElementById("search-bar").addEventListener("input", searchProducts);
+
+// Function to generate the category list
 function generateCategories() {
   const sidebarUl = document.getElementById("sidebar");
   sidebarUl.className = "category";
@@ -197,7 +224,7 @@ function clearCart() {
   cart = [];
   updateCartUI();
 }
-document.getElementById('clearButton').addEventListener('click', clearCart);
+document.getElementById("clearButton").addEventListener("click", clearCart);
 
 // Function to get and increment the order number from localStorage
 function getOrderNumber() {
@@ -223,7 +250,6 @@ function placeOrder() {
     clearCart();
 
     // Jump to Bartender page
-
   } else {
     alert(
       "Cart is empty. Please add items to your cart before placing an order."
@@ -231,7 +257,7 @@ function placeOrder() {
   }
 }
 
-document.getElementById('orderButton').addEventListener('click', placeOrder);
+document.getElementById("orderButton").addEventListener("click", placeOrder);
 
 // Function to update the UI for logged-in users
 // function updateUIForLoggedInUser() {
