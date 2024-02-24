@@ -110,9 +110,22 @@
 .filter-checkboxes .checkmark{
     margin-right: 15px;
 }
-
 /* ******************************* */
 
+/* ***********FILTERING SECTION************* */
+#products{
+    padding: 5px;
+    display: flex;
+    flex-wrap: wrap;
+}
+#products .product-item{
+    background-color: var(--primary-color);
+    width: 350px;
+    height: 280px;
+    margin: 5px;;
+}
+
+/* ******************************* */
 /* 
 body {
     background-color: #2D3250;
