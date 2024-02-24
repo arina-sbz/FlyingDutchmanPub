@@ -3,6 +3,7 @@
 // ##################
 // Users
 // Products
+// Orders
 
 export var DB = {
   users: [
@@ -887,5 +888,15 @@ export var DB = {
       gluten: "1",
       tannin: "1",
     },
+  ],
+  orders: [
+    // {
+    //   order_id: "0",
+    //   user_id: "0",
+    //   table_number: "0",
+    //   items: [],
+    //   amount: "0",
+    //   pickup: "bar",
+    // },
   ],
 };

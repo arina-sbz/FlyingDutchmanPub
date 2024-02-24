@@ -1,5 +1,8 @@
 import { DB } from "./model.js";
 
+// global variables
+let cart = [];
+
 $(document).ready(function () {
   renderApp();
   callEventListeners();
@@ -8,6 +11,7 @@ $(document).ready(function () {
 // function to render the app at the beggining
 function renderApp() {
   fetchMenu();
+  fetchCart();
 }
 
 // ******Functions******
@@ -70,7 +74,7 @@ function showMenu(filteredProducts) {
 `);
     // Bind the click event to this specific product item
     productItem.on("click", () => {
-      addToCart(product.name, product.price);
+      addToCart(product.nr, product.name, product.price);
     });
 
     // Append the product item to the products container
@@ -146,7 +150,7 @@ function filterBySearch() {
   showMenu(filteredProducts);
 }
 
-function filterBySort(){
+function filterBySort() {
   const sortBy = document.getElementById("sortby").value;
   let sortedProducts;
 
@@ -196,6 +200,10 @@ function callEventListeners() {
   $("#sortby").on("change", function () {
     filterBySort();
   });
+
+  $('#cart-container').on('click', '.remove-icon', function() {
+    removeFromCart();
+  });
 }
 
 function fetchMenu() {
@@ -203,5 +211,119 @@ function fetchMenu() {
   filterByType("All");
   $("#menu-container").show();
 }
+
+function getOrderNumber() {
+  let orderNumber = localStorage.getItem("orderNumber");
+
+  if (!orderNumber) {
+    orderNumber = "001";
+  } else {
+    let nextOrderNumber = parseInt(orderNumber) + 1;
+    orderNumber = nextOrderNumber.toString().padStart(3, "0");
+  }
+
+  // Update and store the order number in localStorage
+  localStorage.setItem("orderNumber", orderNumber);
+  return orderNumber;
+}
+
+// Function to add a product to the shopping cart
+function addToCart(number, name, price) {
+  const itemIndex = cart.findIndex((item) => item.name === name);
+
+  if (itemIndex > -1) {
+    cart[itemIndex].quantity += 1; // If the item exists in the cart, increase its quantity
+  } else {
+    cart.push({ number, name, price, quantity: 1 }); // If the item is not in the cart, add it as a new item
+  }
+
+  // Update the cart UI to reflect the changes
+  updateCartUI();
+}
+
+// Function to update the shopping cart UI
+function updateCartUI() {
+  const cartContainer = $("#cart-container");
+  cartContainer.empty();
+  cartContainer.append(`<div class="order-title">Order Summary</div>
+  <hr class="hr-style"> </hr>`);
+  if (cart.length == 0) {
+    cartContainer.append(
+      `<div class="empty-text">
+      <p>Your cart is empty!</p>
+      <p>You can add products by clicking on them or dragging them to the cart.</p>
+      </div>`
+    );
+  } else {
+    // Iterate through items in the cart and create list items for each
+    cart.forEach((item) => {
+      cartContainer.append(`
+      <li class="cart-item">
+      ${item.quantity}x ${item.name}
+      <p class="item-price"> ${item.price}SEK </p>
+      <span class="material-icons remove-icon">cancel</span>
+      </li>
+      `);
+    });
+    // append the checkout options
+    cartContainer.append(`
+    <div class="bottom-section">
+    <div class="service-options">
+      <label>
+        <input type="radio" name="service" value="table" checked> Table Service
+      </label>
+      <label>
+        <input type="radio" name="service" value="bar"> Bar Pick-Up
+      </label>
+      <label>
+        <input type="radio" name="service" value="fridge"> Fridge Self-Service
+        <span class="combination">Combination: 35-16-08</span>
+      </label>
+    </div>
+    
+    <div class="total-section">
+      <span>TOTAL</span>
+      <span class="total-price">64:-</span>
+    </div>
+    
+    <div class="payment-options">
+      <label>
+        <input type="radio" name="payment" value="full" checked> Pay in Full
+      </label>
+      <label>
+        <input type="radio" name="payment" value="split"> Split Bill
+        <input type="text" class="split-amount" value="44:-">
+      </label>
+    </div>
+    
+    <div class="amount-due">
+      <span>AMOUNT DUE</span>
+      <span class="due-price">44:-</span>
+    </div>
+    
+    <button type="button" id="place-order" class="secondary-btn">PLACE ORDER</button>
+    </div>
+  `);
+    // Update the total price in the UI
+    updateTotalPrice();
+  }
+}
+
+// Function to update the total price in the UI
+function updateTotalPrice() {
+  const totalPrice = cart.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
+  document.getElementById("totalPrice").textContent = totalPrice;
+}
+
+function showCart() {}
+
+function fetchCart() {
+  updateCartUI();
+}
+
+
 
 // Other event listeners can go here
