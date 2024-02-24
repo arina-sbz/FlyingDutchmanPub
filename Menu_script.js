@@ -16,18 +16,7 @@ function filterCategory(category) {
   );
 
   // Iterate through filtered products and create elements for each
-  filteredProducts.forEach((product) => {
-    const div = document.createElement("div");
-    div.textContent = `${product.name} - ${product.price}kr`;
-
-    // Add an event handler to add the product to the cart when clicked
-    div.onclick = function () {
-      addToCart(product.name, product.price);
-    };
-
-    // Append the product element to the products display
-    productsDiv.appendChild(div);
-  });
+  displayFilteredProducts(filteredProducts);
 }
 
 // Function to display all products when the page is loaded
@@ -40,19 +29,7 @@ function displayAllProducts() {
     a.name.localeCompare(b.name)
   );
 
-  // Iterate through all products and create elements for each
-  sortedProducts.forEach((product) => {
-    const div = document.createElement("div");
-    div.textContent = `${product.name} - ${product.price}kr`;
-
-    // Add an event handler to add the product to the cart when clicked
-    div.onclick = function () {
-      addToCart(product.name, product.price);
-    };
-
-    // Append the product element to the products display
-    productsDiv.appendChild(div);
-  });
+  displayFilteredProducts(sortedProducts);
 }
 // Show all products when the page is loaded
 document.addEventListener("DOMContentLoaded", displayAllProducts());
@@ -64,25 +41,16 @@ function filterGlutenFree() {
 
   const isGlutenFreeChecked = document.getElementById("gluten").checked;
 
-  const filteredProducts = DB.products.filter(product => {
+  const filteredProducts = DB.products.filter((product) => {
     const meetsGlutenFree = isGlutenFreeChecked ? product.gluten === 0 : true;
     return meetsGlutenFree;
   });
-  
+
   const sortedProducts = filteredProducts.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
-  sortedProducts.forEach((product) => {
-    const div = document.createElement("div");
-    div.textContent = `${product.name} - ${product.price}kr`;
 
-    div.onclick = function () {
-      addToCart(product.name, product.price);
-    };
-
-    productsDiv.appendChild(div);
-  });
-
+  displayFilteredProducts(sortedProducts);
 }
 document.getElementById("gluten").addEventListener("change", filterGlutenFree);
 
@@ -93,16 +61,71 @@ function filterTanninFree() {
 
   const isTanninFreeChecked = document.getElementById("tannin").checked;
 
-  const filteredProducts = DB.products.filter(product => {
+  const filteredProducts = DB.products.filter((product) => {
     const meetsTanninFree = isTanninFreeChecked ? product.tannin === 0 : true;
     return meetsTanninFree;
   });
-  
+
   const sortedProducts = filteredProducts.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
 
-  sortedProducts.forEach((product) => {
+  displayFilteredProducts(sortedProducts);
+}
+document.getElementById("tannin").addEventListener("change", filterTanninFree);
+
+// Function to search for products
+function searchProducts() {
+  const searchInput = document.getElementById("search-bar").value.toLowerCase();
+  const productsDiv = document.getElementById("products");
+  productsDiv.innerHTML = "";
+
+  const filteredProducts = DB.products.filter((product) => {
+    product.name.toLocaleLowerCase().includes(searchInput);
+  });
+
+  displayFilteredProducts(filteredProducts);
+}
+document.getElementById("search-bar").addEventListener("input", searchProducts);
+
+function sortedProducts() {
+  const sortBy = document.getElementById("sortby").value;
+  let sortedProducts;
+
+  switch (sortBy) {
+    case "price_low_high":
+      sortedProducts = DB.products.sort((a, b) => a.price - b.price);
+      break;
+    case "price_high_low":
+      sortedProducts = DB.products.sort((a, b) => b.price - a.price);
+      break;
+    case "newest":
+      sortedProducts = DB.products.sort(
+        (a, b) =>
+          new Date(b.introduced.substring(0, 4)) -
+          new Date(a.introduced.substring(0, 4))
+      );
+      break;
+    case "oldest":
+      sortedProducts = DB.products.sort(
+        (a, b) =>
+          new Date(a.introduced.substring(0, 4)) -
+          new Date(b.introduced.substring(0, 4))
+      );
+      break;
+    default:
+      sortedProducts = DB.products;
+      break;
+  }
+  displayFilteredProducts(sortedProducts);
+}
+document.getElementById("sortby").addEventListener("change", sortedProducts);
+
+function displayFilteredProducts(products) {
+  const productsDiv = document.getElementById("products");
+  productsDiv.innerHTML = ""; // 清除之前的产品显示
+
+  products.forEach((product) => {
     const div = document.createElement("div");
     div.textContent = `${product.name} - ${product.price}kr`;
 
@@ -112,11 +135,9 @@ function filterTanninFree() {
 
     productsDiv.appendChild(div);
   });
-
 }
-document.getElementById("tannin").addEventListener("change", filterTanninFree);
 
-
+// Function to generate the category list
 function generateCategories() {
   const sidebarUl = document.getElementById("sidebar");
   sidebarUl.className = "category";
@@ -197,7 +218,7 @@ function clearCart() {
   cart = [];
   updateCartUI();
 }
-document.getElementById('clearButton').addEventListener('click', clearCart);
+document.getElementById("clearButton").addEventListener("click", clearCart);
 
 // Function to get and increment the order number from localStorage
 function getOrderNumber() {
@@ -223,7 +244,6 @@ function placeOrder() {
     clearCart();
 
     // Jump to Bartender page
-
   } else {
     alert(
       "Cart is empty. Please add items to your cart before placing an order."
@@ -231,7 +251,7 @@ function placeOrder() {
   }
 }
 
-document.getElementById('orderButton').addEventListener('click', placeOrder);
+document.getElementById("orderButton").addEventListener("click", placeOrder);
 
 // Function to update the UI for logged-in users
 // function updateUIForLoggedInUser() {
