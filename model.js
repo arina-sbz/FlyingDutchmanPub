@@ -128,6 +128,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Beer",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "1101003",
@@ -155,6 +157,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Beer",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "1101203",
@@ -182,6 +186,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Beer",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "1104303",
@@ -209,6 +215,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Beer",
+      gluten: "1",
+      tannin: "0",
     },
     {
       nr: "1104803",
@@ -236,6 +244,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Beer",
+      gluten: "0",
+      tannin: "1",
     },
     {
       nr: "1104903",
@@ -263,6 +273,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Beer",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "1105603",
@@ -290,6 +302,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Beer",
+      gluten: "0",
+      tannin: "0",
     },
     {
       nr: "1105901",
@@ -317,6 +331,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Beer",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "1106901",
@@ -344,6 +360,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Beer",
+      gluten: "1",
+      tannin: "1",
     },
     //Wine
     {
@@ -372,6 +390,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Wine",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "7416501",
@@ -399,6 +419,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Wine",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "1279701",
@@ -426,6 +448,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Wine",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "1279708",
@@ -453,6 +477,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Wine",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "7309701",
@@ -480,6 +506,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Wine",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "7368801",
@@ -507,6 +535,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Wine",
+      gluten: "0",
+      tannin: "0",
     },
     {
       nr: "8327101",
@@ -534,6 +564,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Wine",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "7360501",
@@ -561,6 +593,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Wine",
+      gluten: "1",
+      tannin: "0",
     },
     {
       nr: "7987409",
@@ -588,6 +622,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Wine",
+      gluten: "0",
+      tannin: "1",
     },
     //Spirit
     {
@@ -616,6 +652,8 @@ export var DB = {
       ekologisk: "0",
       koscher: "0",
       type: "Spirit",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "1005001",
@@ -643,6 +681,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Spirit",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "1005401",
@@ -670,6 +710,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Spirit",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "1011701",
@@ -697,6 +739,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Spirit",
+      gluten: "0",
+      tannin: "1",
     },
     {
       nr: "1012601",
@@ -724,6 +768,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Spirit",
+      gluten: "1",
+      tannin: "0",
     },
     {
       nr: "1019202",
@@ -751,6 +797,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Spirit",
+      gluten: "0",
+      tannin: "0",
     },
     {
       nr: "1019301",
@@ -778,6 +826,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Spirit",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "1019701",
@@ -805,6 +855,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Spirit",
+      gluten: "1",
+      tannin: "1",
     },
     {
       nr: "1023901",
@@ -832,6 +884,8 @@ export var DB = {
       organic: "0",
       kosher: "0",
       type: "Spirit",
+      gluten: "1",
+      tannin: "1",
     },
   ],
 };
