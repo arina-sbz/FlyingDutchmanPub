@@ -57,6 +57,66 @@ function displayAllProducts() {
 // Show all products when the page is loaded
 document.addEventListener("DOMContentLoaded", displayAllProducts());
 
+// Function to choose gluten free products
+function filterGlutenFree() {
+  const productsDiv = document.getElementById("products");
+  productsDiv.innerHTML = ""; // Clear the products display
+
+  const isGlutenFreeChecked = document.getElementById("gluten").checked;
+
+  const filteredProducts = DB.products.filter(product => {
+    const meetsGlutenFree = isGlutenFreeChecked ? product.gluten === 0 : true;
+    return meetsGlutenFree;
+  });
+  
+  const sortedProducts = filteredProducts.sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+  sortedProducts.forEach((product) => {
+    const div = document.createElement("div");
+    div.textContent = `${product.name} - ${product.price}kr`;
+
+    div.onclick = function () {
+      addToCart(product.name, product.price);
+    };
+
+    productsDiv.appendChild(div);
+  });
+
+}
+document.getElementById("gluten").addEventListener("change", filterGlutenFree);
+
+// Function to choose tannin free products
+function filterTanninFree() {
+  const productsDiv = document.getElementById("products");
+  productsDiv.innerHTML = ""; // Clear the products display
+
+  const isTanninFreeChecked = document.getElementById("tannin").checked;
+
+  const filteredProducts = DB.products.filter(product => {
+    const meetsTanninFree = isTanninFreeChecked ? product.tannin === 0 : true;
+    return meetsTanninFree;
+  });
+  
+  const sortedProducts = filteredProducts.sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+
+  sortedProducts.forEach((product) => {
+    const div = document.createElement("div");
+    div.textContent = `${product.name} - ${product.price}kr`;
+
+    div.onclick = function () {
+      addToCart(product.name, product.price);
+    };
+
+    productsDiv.appendChild(div);
+  });
+
+}
+document.getElementById("tannin").addEventListener("change", filterTanninFree);
+
+
 function generateCategories() {
   const sidebarUl = document.getElementById("sidebar");
   sidebarUl.className = "category";
