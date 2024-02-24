@@ -57,6 +57,40 @@ function displayAllProducts() {
 // Show all products when the page is loaded
 document.addEventListener("DOMContentLoaded", displayAllProducts());
 
+
+// // Function to choose gluten free products
+// function filterGlutenFree() {
+//   const productsDiv = document.getElementById("products");
+//   productsDiv.innerHTML = ""; // Clear the products display
+
+//   // 获取复选框的状态
+//   const isGlutenFreeChecked = document.getElementById("gluten").checked;
+//   const isTanninFreeChecked = document.getElementById("tannin").checked;
+
+//   const filteredProducts = DB.products.filter(product => {
+//     const meetsGlutenFree = isGlutenFreeChecked ? product.gluten === 0 : true;
+//     const meetsTanninFree = isTanninFreeChecked ? product.tannin === 0 : true;
+//     return meetsGlutenFree && meetsTanninFree;
+//   });
+  
+//   const sortedProducts = filteredProducts.sort((a, b) =>
+//     a.name.localeCompare(b.name)
+//   );
+//   sortedProducts.forEach((product) => {
+//     const div = document.createElement("div");
+//     div.textContent = `${product.name} - ${product.price}kr`;
+
+//     // 添加事件处理程序，单击时将产品添加到购物车
+//     div.onclick = function () {
+//       addToCart(product.name, product.price);
+//     };
+
+//     // 将产品元素附加到产品显示区域
+//     productsDiv.appendChild(div);
+//   });
+
+// }
+
 function generateCategories() {
   const sidebarUl = document.getElementById("sidebar");
   sidebarUl.className = "category";
