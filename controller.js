@@ -12,13 +12,17 @@ function renderApp() {
 // ******Functions******
 // Menu
 function returnFilterButtons() {
-  var categories = ["All", "Beers", "Wines", "Cocktails"];
-  categories.forEach((category) => {
-    $(".filter-buttons").append(
-      `<button type="button" class="secondary-btn" onclick="showMenu('${category}')">${category}</button>`
-    );
-  });
-}
+    var categories = ["All", "Beer", "Wine", "Spirit"];
+    categories.forEach((category) => {
+      $(".filter-buttons").append(
+        `<button type="button" class="secondary-btn">${category}</button>`
+      );
+      $('.filter-buttons .secondary-btn').on('click', function() {
+        const categoryName = $(this).text();
+        showMenu(categoryName);
+      });
+    });
+  }
 
 function showMenu(categoryName) {
   const productsDiv = document.getElementById("products");
@@ -30,7 +34,7 @@ function showMenu(categoryName) {
     filteredProducts = DB.products;
   } else {
     filteredProducts = DB.products.filter(
-      (product) => product.type === categoryName
+      (product) => product.type == categoryName
     );
   }
 
