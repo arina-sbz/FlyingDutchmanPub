@@ -88,8 +88,28 @@
 }
 /* ******************************* */
 
+/* ***********MENU************* */
 /* ***********FILTERING SECTION************* */
-
+#filter-section{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.filter-buttons .secondary-btn{
+    padding: .8rem;
+    margin: 10px 5px;
+}
+.filter-checkboxes{
+    display: flex;
+    margin:10px;
+    color:var(--secondary-color);
+    font-size: 24px;
+}
+.filter-checkboxes .gluten-checkbox{
+    margin-right: 15px;
+}
+.filter-checkboxes .checkmark{
+    margin-right: 15px;
+}
 
 /* ******************************* */
 

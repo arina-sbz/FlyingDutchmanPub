@@ -20,10 +20,11 @@ function returnFilterButtons(){
 }
 
 function showMenu(categoryName){
-    // code here 
+    
 }
 
 function fetchMenu(){
     returnFilterButtons();
+    showMenu();
     $('#menu-container').show();
 }
