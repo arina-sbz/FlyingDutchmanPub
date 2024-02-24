@@ -12,7 +12,7 @@ function filterCategory(category) {
 
   // Filter products based on the selected category
   const filteredProducts = DB.products.filter(
-    (product) => product.category === category
+    (product) => product.type === category
   );
 
   // Iterate through filtered products and create elements for each
@@ -78,7 +78,7 @@ function generateCategories() {
 
   // Get unique categories and sort them
   const categories = Array.from(
-    new Set(DB.products.map((product) => product.category))
+    new Set(DB.products.map((product) => product.type))
   ).sort((a, b) => a.localeCompare(b));
 
   categories.forEach((category) => {
