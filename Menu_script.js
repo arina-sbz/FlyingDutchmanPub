@@ -12,7 +12,7 @@ function filterCategory(category) {
 
   // Filter products based on the selected category
   const filteredProducts = DB.products.filter(
-    (product) => product.category === category
+    (product) => product.type === category
   );
 
   // Iterate through filtered products and create elements for each
@@ -55,7 +55,7 @@ function displayAllProducts() {
   });
 }
 // Show all products when the page is loaded
-document.addEventListener("DOMContentLoaded", displayAllProducts);
+document.addEventListener("DOMContentLoaded", displayAllProducts());
 
 function generateCategories() {
   const sidebarUl = document.getElementById("sidebar");
@@ -78,7 +78,7 @@ function generateCategories() {
 
   // Get unique categories and sort them
   const categories = Array.from(
-    new Set(DB.products.map((product) => product.category))
+    new Set(DB.products.map((product) => product.type))
   ).sort((a, b) => a.localeCompare(b));
 
   categories.forEach((category) => {
@@ -137,6 +137,7 @@ function clearCart() {
   cart = [];
   updateCartUI();
 }
+document.getElementById('clearButton').addEventListener('click', clearCart);
 
 // Function to get and increment the order number from localStorage
 function getOrderNumber() {
@@ -163,10 +164,6 @@ function placeOrder() {
 
     // Jump to Bartender page
 
-    // Auto refresh the page after 3 seconds
-    setTimeout(() => {
-      window.location.reload();
-    }, 3000);
   } else {
     alert(
       "Cart is empty. Please add items to your cart before placing an order."
@@ -174,94 +171,88 @@ function placeOrder() {
   }
 }
 
-isUserLoggedIn = sessionStorage.getItem("isUserLoggedIn");
+document.getElementById('orderButton').addEventListener('click', placeOrder);
 
 // Function to update the UI for logged-in users
-function updateUIForLoggedInUser() {
-  if (isUserLoggedIn == 1) {
-    const orderButton = document.getElementById("orderButton"); // Assuming you have an order button with this ID
-    orderButton.style.display = "none"; // Hide the existing order button
-    // Create a new 'Pay' button
-    const payButton = document.createElement("button");
-    payButton.textContent = "Pay";
-    payButton.id = "payButton";
+// function updateUIForLoggedInUser() {
+//   if (isUserLoggedIn == 1) {
+//     const orderButton = document.getElementById("orderButton"); // Assuming you have an order button with this ID
+//     orderButton.style.display = "none"; // Hide the existing order button
+//     // Create a new 'Pay' button
+//     const payButton = document.createElement("button");
+//     payButton.textContent = "Pay";
+//     payButton.id = "payButton";
 
-    // Define the delivery options
-    const deliveryOptionSelect = document.createElement("select");
-    deliveryOptionSelect.id = "deliveryOption";
-    deliveryOptionSelect.innerHTML = `
-            <option value="self-service">Self-service</option>
-            <option value="table-service">Table-service</option>
-        `;
+//     // Define the delivery options
+//     const deliveryOptionSelect = document.createElement("select");
+//     deliveryOptionSelect.id = "deliveryOption";
+//     deliveryOptionSelect.innerHTML = `
+//             <option value="self-service">Self-service</option>
+//             <option value="table-service">Table-service</option>
+//         `;
 
-    // Append the delivery options and pay button to the cart
-    const cartDiv = document.getElementById("cart"); // Make sure this is the correct ID for your cart element
-    cartDiv.appendChild(deliveryOptionSelect);
-    cartDiv.appendChild(payButton);
+//     // Append the delivery options and pay button to the cart
+//     const cartDiv = document.getElementById("cart"); // Make sure this is the correct ID for your cart element
+//     cartDiv.appendChild(deliveryOptionSelect);
+//     cartDiv.appendChild(payButton);
 
-    // Event listener for the 'Pay' button
-    payButton.addEventListener("click", function () {
-      if (cart.length > 0) {
-        const selectedOption = deliveryOptionSelect.value;
-        if (selectedOption === "self-service") {
-          generateTakeawayCode();
-        } else if (selectedOption === "table-service") {
-          // If 'table-service' is selected, show table number selection
-          const tableNumber = prompt("Please enter your table number (1-30):");
-          if (
-            tableNumber &&
-            parseInt(tableNumber) >= 1 &&
-            parseInt(tableNumber) <= 30
-          ) {
-            alert(
-              `Order paied successfully. Your order number is ${getOrderNumber()} for table ${tableNumber}.`
-            );
-          } else {
-            alert(
-              "Invalid table number. Please enter a number between 1 and 30."
-            );
-          }
-        }
-        clearCart();
-      } else {
-        alert(
-          "Cart is empty. Please add items to your cart before placing an order."
-        );
-      }
-    });
-  }
-}
+//     // Event listener for the 'Pay' button
+//     payButton.addEventListener("click", function () {
+//       if (cart.length > 0) {
+//         const selectedOption = deliveryOptionSelect.value;
+//         if (selectedOption === "self-service") {
+//           generateTakeawayCode();
+//         } else if (selectedOption === "table-service") {
+//           // If 'table-service' is selected, show table number selection
+//           const tableNumber = prompt("Please enter your table number (1-30):");
+//           if (
+//             tableNumber &&
+//             parseInt(tableNumber) >= 1 &&
+//             parseInt(tableNumber) <= 30
+//           ) {
+//             alert(
+//               `Order paied successfully. Your order number is ${getOrderNumber()} for table ${tableNumber}.`
+//             );
+//           } else {
+//             alert(
+//               "Invalid table number. Please enter a number between 1 and 30."
+//             );
+//           }
+//         }
+//         clearCart();
+//       } else {
+//         alert(
+//           "Cart is empty. Please add items to your cart before placing an order."
+//         );
+//       }
+//     });
+//   }
+// }
 
 // Function to show table number selection
-function showTableNumberSelection() {
-  let tableNumberSelect = document.getElementById("tableNumber");
-  if (!tableNumberSelect) {
-    tableNumberSelect = document.createElement("select");
-    tableNumberSelect.id = "tableNumber";
-    for (let i = 1; i <= 20; i++) {
-      tableNumberSelect.options.add(new Option(i, i));
-    }
-    const deliveryOption = document.getElementById("deliveryOption");
-    deliveryOption.after(tableNumberSelect);
-  }
-}
+// function showTableNumberSelection() {
+//   let tableNumberSelect = document.getElementById("tableNumber");
+//   if (!tableNumberSelect) {
+//     tableNumberSelect = document.createElement("select");
+//     tableNumberSelect.id = "tableNumber";
+//     for (let i = 1; i <= 20; i++) {
+//       tableNumberSelect.options.add(new Option(i, i));
+//     }
+//     const deliveryOption = document.getElementById("deliveryOption");
+//     deliveryOption.after(tableNumberSelect);
+//   }
+// }
 
 // Function to hide table number selection
-function hideTableNumberSelection() {
-  const tableNumberSelect = document.getElementById("tableNumber");
-  if (tableNumberSelect) {
-    tableNumberSelect.remove();
-  }
-}
+// function hideTableNumberSelection() {
+//   const tableNumberSelect = document.getElementById("tableNumber");
+//   if (tableNumberSelect) {
+//     tableNumberSelect.remove();
+//   }
+// }
 
 // Function to generate a random 4-digit code for takeaway orders
-function generateTakeawayCode() {
-  const code = Math.floor(1000 + Math.random() * 9000); // Generates a number between 1000 and 9999
-  alert(`Order paied successfully. Self Service Code: ${code}`);
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-  updateUIForLoggedInUser();
-  displayAllProducts();
-  generateCategories();
-});
+// function generateTakeawayCode() {
+//   const code = Math.floor(1000 + Math.random() * 9000); // Generates a number between 1000 and 9999
+//   alert(`Order paied successfully. Self Service Code: ${code}`);
+// }
