@@ -55,7 +55,7 @@ function displayAllProducts() {
   });
 }
 // Show all products when the page is loaded
-document.addEventListener("DOMContentLoaded", displayAllProducts);
+document.addEventListener("DOMContentLoaded", displayAllProducts());
 
 function generateCategories() {
   const sidebarUl = document.getElementById("sidebar");
@@ -137,6 +137,7 @@ function clearCart() {
   cart = [];
   updateCartUI();
 }
+document.getElementById('clearButton').addEventListener('click', clearCart);
 
 // Function to get and increment the order number from localStorage
 function getOrderNumber() {
@@ -163,16 +164,14 @@ function placeOrder() {
 
     // Jump to Bartender page
 
-    // Auto refresh the page after 3 seconds
-    setTimeout(() => {
-      window.location.reload();
-    }, 3000);
   } else {
     alert(
       "Cart is empty. Please add items to your cart before placing an order."
     );
   }
 }
+
+document.getElementById('orderButton').addEventListener('click', placeOrder);
 
 // Function to update the UI for logged-in users
 // function updateUIForLoggedInUser() {
@@ -231,34 +230,29 @@ function placeOrder() {
 // }
 
 // Function to show table number selection
-function showTableNumberSelection() {
-  let tableNumberSelect = document.getElementById("tableNumber");
-  if (!tableNumberSelect) {
-    tableNumberSelect = document.createElement("select");
-    tableNumberSelect.id = "tableNumber";
-    for (let i = 1; i <= 20; i++) {
-      tableNumberSelect.options.add(new Option(i, i));
-    }
-    const deliveryOption = document.getElementById("deliveryOption");
-    deliveryOption.after(tableNumberSelect);
-  }
-}
+// function showTableNumberSelection() {
+//   let tableNumberSelect = document.getElementById("tableNumber");
+//   if (!tableNumberSelect) {
+//     tableNumberSelect = document.createElement("select");
+//     tableNumberSelect.id = "tableNumber";
+//     for (let i = 1; i <= 20; i++) {
+//       tableNumberSelect.options.add(new Option(i, i));
+//     }
+//     const deliveryOption = document.getElementById("deliveryOption");
+//     deliveryOption.after(tableNumberSelect);
+//   }
+// }
 
 // Function to hide table number selection
-function hideTableNumberSelection() {
-  const tableNumberSelect = document.getElementById("tableNumber");
-  if (tableNumberSelect) {
-    tableNumberSelect.remove();
-  }
-}
+// function hideTableNumberSelection() {
+//   const tableNumberSelect = document.getElementById("tableNumber");
+//   if (tableNumberSelect) {
+//     tableNumberSelect.remove();
+//   }
+// }
 
 // Function to generate a random 4-digit code for takeaway orders
-function generateTakeawayCode() {
-  const code = Math.floor(1000 + Math.random() * 9000); // Generates a number between 1000 and 9999
-  alert(`Order paied successfully. Self Service Code: ${code}`);
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-  displayAllProducts();
-  generateCategories();
-});
+// function generateTakeawayCode() {
+//   const code = Math.floor(1000 + Math.random() * 9000); // Generates a number between 1000 and 9999
+//   alert(`Order paied successfully. Self Service Code: ${code}`);
+// }
