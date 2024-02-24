@@ -12,17 +12,17 @@ function renderApp() {
 // ******Functions******
 // Menu
 function returnFilterButtons() {
-    var categories = ["All", "Beer", "Wine", "Spirit"];
-    categories.forEach((category) => {
-      $(".filter-buttons").append(
-        `<button type="button" class="secondary-btn">${category}</button>`
-      );
-      $('.filter-buttons .secondary-btn').on('click', function() {
-        const categoryName = $(this).text();
-        showMenu(categoryName);
-      });
+  var categories = ["All", "Beer", "Wine", "Spirit"];
+  categories.forEach((category) => {
+    $(".filter-buttons").append(
+      `<button type="button" class="secondary-btn">${category}</button>`
+    );
+    $(".filter-buttons .secondary-btn").on("click", function () {
+      const categoryName = $(this).text();
+      showMenu(categoryName);
     });
-  }
+  });
+}
 
 function showMenu(categoryName) {
   const productsDiv = document.getElementById("products");
@@ -40,22 +40,56 @@ function showMenu(categoryName) {
 
   // Iterate through filtered products and create elements for each
   filteredProducts.forEach((product) => {
-    const div = document.createElement("div");
-    div.classList.add("product-item");
-    div.textContent = `${product.name} - ${product.price}kr`;
+    // Create the product item element
+    const productItem = $(`
+    <div class="product-item">
+        <h3 class="product-name">${product.name}</h3>
+        <p class="product-price">${product.price} kr</p>
+        ${
+          product.alcoholstrength
+            ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
+            : ""
+        }
+        ${
+          product.category
+            ? `<p class="product-category">${product.category}</p>`
+            : ""
+        }
+        ${
+          product.packaging
+            ? `<p class="packaging">${product.packaging}</p>`
+            : ""
+        }
+        ${
+          product.productionyear
+            ? `<p class="product-year">${product.productionyear}</p>`
+            : ""
+        }
+        ${
+          product.producer
+            ? `<p class="product-producer">${product.producer}</p>`
+            : ""
+        }
+        ${
+          product.countryoforiginlandname
+            ? `<p>${product.countryoforiginlandname}</p>`
+            : ""
+        }
+    </div>
+`);
 
-    // Add an event handler to add the product to the cart when clicked
-    div.onclick = function () {
+    // Bind the click event to this specific product item
+    productItem.on("click", () => {
       addToCart(product.name, product.price);
-    };
+    });
 
-    // Append the product element to the products display
-    productsDiv.appendChild(div);
+    // Append the product item to the products container
+    $("#products").append(productItem);
   });
 }
 
 function fetchMenu() {
   returnFilterButtons();
-  showMenu('All');
+  showMenu("All");
   $("#menu-container").show();
 }
