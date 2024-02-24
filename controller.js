@@ -40,36 +40,30 @@ function showMenu(filteredProducts) {
     <div class="product-item">
         <h3 class="product-name">${product.name}</h3>
         <p class="product-price">${product.price} kr</p>
-        ${
-          product.alcoholstrength
-            ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
-            : ""
-        }
-        ${
-          product.category
-            ? `<p class="product-category">${product.category}</p>`
-            : ""
-        }
-        ${
-          product.packaging
-            ? `<p class="packaging">${product.packaging}</p>`
-            : ""
-        }
-        ${
-          product.productionyear
-            ? `<p class="product-year">${product.productionyear}</p>`
-            : ""
-        }
-        ${
-          product.producer
-            ? `<p class="product-producer">${product.producer}</p>`
-            : ""
-        }
-        ${
-          product.countryoforiginlandname
-            ? `<p>${product.countryoforiginlandname}</p>`
-            : ""
-        }
+        ${product.alcoholstrength
+        ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
+        : ""
+      }
+        ${product.category
+        ? `<p class="product-category">${product.category}</p>`
+        : ""
+      }
+        ${product.packaging
+        ? `<p class="packaging">${product.packaging}</p>`
+        : ""
+      }
+        ${product.productionyear
+        ? `<p class="product-year">${product.productionyear}</p>`
+        : ""
+      }
+        ${product.producer
+        ? `<p class="product-producer">${product.producer}</p>`
+        : ""
+      }
+        ${product.countryoforiginlandname
+        ? `<p>${product.countryoforiginlandname}</p>`
+        : ""
+      }
     </div>
 `);
     // Bind the click event to this specific product item
@@ -140,6 +134,7 @@ function filterByAllergic(type) {
   showMenu(filteredProducts);
 }
 
+// return the list of products filtered based on search
 function filterBySearch() {
   const searchInput = document.getElementById("search-bar").value.toLowerCase();
 
@@ -150,6 +145,7 @@ function filterBySearch() {
   showMenu(filteredProducts);
 }
 
+// return the list of products filtered based on different sort
 function filterBySort() {
   const sortBy = document.getElementById("sortby").value;
   let sortedProducts;
@@ -201,7 +197,7 @@ function callEventListeners() {
     filterBySort();
   });
 
-  $('#cart-container').on('click', '.remove-icon', function() {
+  $('#cart-container').on('click', '.remove-icon', function () {
     removeFromCart();
   });
 }
@@ -318,7 +314,7 @@ function updateTotalPrice() {
   document.getElementById("totalPrice").textContent = totalPrice;
 }
 
-function showCart() {}
+function showCart() { }
 
 function fetchCart() {
   updateCartUI();
