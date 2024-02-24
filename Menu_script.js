@@ -62,7 +62,6 @@ function filterGlutenFree() {
   const productsDiv = document.getElementById("products");
   productsDiv.innerHTML = ""; // Clear the products display
 
-  // 获取复选框的状态
   const isGlutenFreeChecked = document.getElementById("gluten").checked;
 
   const filteredProducts = DB.products.filter(product => {
@@ -77,12 +76,10 @@ function filterGlutenFree() {
     const div = document.createElement("div");
     div.textContent = `${product.name} - ${product.price}kr`;
 
-    // 添加事件处理程序，单击时将产品添加到购物车
     div.onclick = function () {
       addToCart(product.name, product.price);
     };
 
-    // 将产品元素附加到产品显示区域
     productsDiv.appendChild(div);
   });
 
@@ -94,7 +91,6 @@ function filterTanninFree() {
   const productsDiv = document.getElementById("products");
   productsDiv.innerHTML = ""; // Clear the products display
 
-  // 获取复选框的状态
   const isTanninFreeChecked = document.getElementById("tannin").checked;
 
   const filteredProducts = DB.products.filter(product => {
@@ -110,12 +106,10 @@ function filterTanninFree() {
     const div = document.createElement("div");
     div.textContent = `${product.name} - ${product.price}kr`;
 
-    // 添加事件处理程序，单击时将产品添加到购物车
     div.onclick = function () {
       addToCart(product.name, product.price);
     };
 
-    // 将产品元素附加到产品显示区域
     productsDiv.appendChild(div);
   });
 
