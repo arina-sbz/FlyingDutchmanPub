@@ -29,19 +29,7 @@ function displayAllProducts() {
     a.name.localeCompare(b.name)
   );
 
-  // Iterate through all products and create elements for each
-  sortedProducts.forEach((product) => {
-    const div = document.createElement("div");
-    div.textContent = `${product.name} - ${product.price}kr`;
-
-    // Add an event handler to add the product to the cart when clicked
-    div.onclick = function () {
-      addToCart(product.name, product.price);
-    };
-
-    // Append the product element to the products display
-    productsDiv.appendChild(div);
-  });
+  displayFilteredProducts(sortedProducts);
 }
 // Show all products when the page is loaded
 document.addEventListener("DOMContentLoaded", displayAllProducts());
