@@ -77,6 +77,11 @@ function showMenu(filteredProducts) {
       e.originalEvent.dataTransfer.setData("text", product.nr);
     });
 
+    $('body').on('dragstart', '.cart-item', function (e) {
+      const itemNr = $(this).data('nr');
+      e.originalEvent.dataTransfer.setData("text", itemNr);
+    });
+
     // Append the product item to the products container
     $("#products").append(productItem);
   });
@@ -204,8 +209,8 @@ function callEventListeners() {
   });
 
   $('#cart-container').on('click', '.remove-icon', function () {
-    const itemName = $(this).data('name');
-    removeFromCart(itemName);
+    const itemNr = $(this).data('nr');
+    removeFromCart(itemNr);
   });
 
   // For drag over
@@ -228,6 +233,18 @@ function callEventListeners() {
       addToCart(productToAdd.nr, productToAdd.name, productToAdd.price);
     }
   });
+
+  // For drag over from cart
+  $('#products').on('dragover', function (e) {
+    e.preventDefault(); // Allow drop
+  });
+
+  $('#products').on('drop', function (e) {
+    e.preventDefault();
+    const itemNr = e.originalEvent.dataTransfer.getData("text");
+    removeFromCart(itemNr);
+  });
+
 
 
 }
@@ -254,13 +271,13 @@ function getOrderNumber() {
 }
 
 // Function to add a product to the shopping cart
-function addToCart(number, name, price) {
-  const itemIndex = cart.findIndex((item) => item.name === name);
+function addToCart(nr, name, price) {
+  const itemIndex = cart.findIndex((item) => item.nr === nr);
 
   if (itemIndex > -1) {
     cart[itemIndex].quantity += 1; // If the item exists in the cart, increase its quantity
   } else {
-    cart.push({ number, name, price, quantity: 1 }); // If the item is not in the cart, add it as a new item
+    cart.push({ nr, name, price, quantity: 1 }); // If the item is not in the cart, add it as a new item
   }
 
   // Update the cart UI to reflect the changes
@@ -284,10 +301,10 @@ function updateCartUI() {
     // Iterate through items in the cart and create list items for each
     cart.forEach((item) => {
       cartContainer.append(`
-      <li class="cart-item">
+      <li class="cart-item" draggable="true" data-nr="${item.nr}">
       ${item.quantity}x ${item.name}
       <p class="item-price"> ${item.price}SEK </p>
-      <span class="material-icons remove-icon" data-name="${item.name}">cancel</span>
+      <span class="material-icons remove-icon" data-nr="${item.nr}">cancel</span>
       </li>
       `);
     });
@@ -355,8 +372,8 @@ function fetchCart() {
 // Other event listeners can go here
 
 // Function to remove a product from the shopping cart
-function removeFromCart(name) {
-  const itemIndex = cart.findIndex((item) => item.name === name);
+function removeFromCart(nr) {
+  const itemIndex = cart.findIndex((item) => item.nr == nr);
 
   if (itemIndex > -1) {
     if (cart[itemIndex].quantity > 1) {
