@@ -40,36 +40,30 @@ function showMenu(filteredProducts) {
     <div class="product-item" draggable="true" id="${product.nr}">
         <h3 class="product-name">${product.name}</h3>
         <p class="product-price">${product.price} kr</p>
-        ${
-          product.alcoholstrength
-            ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
-            : ""
-        }
-        ${
-          product.category
-            ? `<p class="product-category">${product.category}</p>`
-            : ""
-        }
-        ${
-          product.packaging
-            ? `<p class="packaging">${product.packaging}</p>`
-            : ""
-        }
-        ${
-          product.productionyear
-            ? `<p class="product-year">${product.productionyear}</p>`
-            : ""
-        }
-        ${
-          product.producer
-            ? `<p class="product-producer">${product.producer}</p>`
-            : ""
-        }
-        ${
-          product.countryoforiginlandname
-            ? `<p>${product.countryoforiginlandname}</p>`
-            : ""
-        }
+        ${product.alcoholstrength
+        ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
+        : ""
+      }
+        ${product.category
+        ? `<p class="product-category">${product.category}</p>`
+        : ""
+      }
+        ${product.packaging
+        ? `<p class="packaging">${product.packaging}</p>`
+        : ""
+      }
+        ${product.productionyear
+        ? `<p class="product-year">${product.productionyear}</p>`
+        : ""
+      }
+        ${product.producer
+        ? `<p class="product-producer">${product.producer}</p>`
+        : ""
+      }
+        ${product.countryoforiginlandname
+        ? `<p>${product.countryoforiginlandname}</p>`
+        : ""
+      }
     </div>
 `);
     // Bind the click event to this specific product item
@@ -176,15 +170,15 @@ function filterBySort() {
       break;
     case "alcohol_low_high":
       sortedProducts = DB.products.sort((a, b) => {
-        const alcoholA = parseFloat(a.alcoholstrength.replace('%', ''));
-        const alcoholB = parseFloat(b.alcoholstrength.replace('%', ''));
+        const alcoholA = parseFloat(a.alcoholstrength.replace("%", ""));
+        const alcoholB = parseFloat(b.alcoholstrength.replace("%", ""));
         return alcoholA - alcoholB;
       });
       break;
     case "alcohol_high_low":
       sortedProducts = DB.products.sort((a, b) => {
-        const alcoholA = parseFloat(a.alcoholstrength.replace('%', ''));
-        const alcoholB = parseFloat(b.alcoholstrength.replace('%', ''));
+        const alcoholA = parseFloat(a.alcoholstrength.replace("%", ""));
+        const alcoholB = parseFloat(b.alcoholstrength.replace("%", ""));
         return alcoholB - alcoholA;
       });
       break;
@@ -304,7 +298,6 @@ function updateCartUI() {
   }
 }
 
-
 function manageAmountDue() {
   // Select the radio buttons and the "amount-due" section
   var paymentOptions = document.querySelectorAll('input[name="payment"]');
@@ -329,26 +322,17 @@ function manageAmountDue() {
 }
 
 function updateAmountDue() {
-  // Select the "due-price" span, the total price element, and the input field
-  var duePriceSpan = document.querySelector(".due-price");
-  var totalPriceElement = document.querySelector(".total-price");
-  var splitAmountInput = document.querySelector(".split-amount");
+  const numberOfPeople = parseFloat($('.split-amount').val());
+  const totalAmount = updateTotalPrice(); // Ensure this function returns the current total price of the cart
 
-  // Get the value from the input field
-  var amountDue = parseFloat(splitAmountInput.value);
-
-  // Check if the split payment option is selected and the value is a valid number
-  var paymentOption = document.querySelector('input[name="payment"]:checked');
-  if (paymentOption.value === "split" && !isNaN(amountDue)) {
-    // Update the "due-price" span with the amount due
-    duePriceSpan.textContent = amountDue;
-
-    // Subtract the amount due from the total price
-    var totalPrice = parseFloat(totalPriceElement.textContent);
-    totalPrice -= amountDue;
-
-    // Update the total price element
-    totalPriceElement.textContent = totalPrice.toFixed(2);
+  // Validate the input to make sure it is a number and greater than 0
+  if (!isNaN(numberOfPeople) && numberOfPeople > 0) {
+    const dueAmountPerPerson = totalAmount / numberOfPeople;
+    // Update the UI to display the due amount per person
+    $('.due-price').text(`${dueAmountPerPerson.toFixed(2)} SEK per person`);
+  } else {
+    // If the input is invalid, you can reset the displayed due amount or show an error message
+    $('.due-price').text(`Invalid input`);
   }
 }
 
@@ -439,4 +423,6 @@ function callEventListeners() {
     const itemNr = e.originalEvent.dataTransfer.getData("text");
     removeFromCart(itemNr);
   });
+
+  $(".split-amount").on("input", updateAmountDue);
 }
