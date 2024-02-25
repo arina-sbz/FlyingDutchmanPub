@@ -37,44 +37,44 @@ function showMenu(filteredProducts) {
   filteredProducts.forEach((product) => {
     // Create the product item element
     const productItem = $(`
-    <div class="product-item">
+    <div class="product-item" draggable="true" id="${product.nr}">
         <h3 class="product-name">${product.name}</h3>
         <p class="product-price">${product.price} kr</p>
-        ${
-          product.alcoholstrength
-            ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
-            : ""
-        }
-        ${
-          product.category
-            ? `<p class="product-category">${product.category}</p>`
-            : ""
-        }
-        ${
-          product.packaging
-            ? `<p class="packaging">${product.packaging}</p>`
-            : ""
-        }
-        ${
-          product.productionyear
-            ? `<p class="product-year">${product.productionyear}</p>`
-            : ""
-        }
-        ${
-          product.producer
-            ? `<p class="product-producer">${product.producer}</p>`
-            : ""
-        }
-        ${
-          product.countryoforiginlandname
-            ? `<p>${product.countryoforiginlandname}</p>`
-            : ""
-        }
+        ${product.alcoholstrength
+        ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
+        : ""
+      }
+        ${product.category
+        ? `<p class="product-category">${product.category}</p>`
+        : ""
+      }
+        ${product.packaging
+        ? `<p class="packaging">${product.packaging}</p>`
+        : ""
+      }
+        ${product.productionyear
+        ? `<p class="product-year">${product.productionyear}</p>`
+        : ""
+      }
+        ${product.producer
+        ? `<p class="product-producer">${product.producer}</p>`
+        : ""
+      }
+        ${product.countryoforiginlandname
+        ? `<p>${product.countryoforiginlandname}</p>`
+        : ""
+      }
     </div>
 `);
     // Bind the click event to this specific product item
     productItem.on("click", () => {
       addToCart(product.nr, product.name, product.price);
+    });
+
+    // Bind the dragstart event to this specific product item for drag and drop
+    productItem.on("dragstart", (e) => {
+      // Use the product's nr (number) as identifier
+      e.originalEvent.dataTransfer.setData("text", product.nr);
     });
 
     // Append the product item to the products container
@@ -140,6 +140,7 @@ function filterByAllergic(type) {
   showMenu(filteredProducts);
 }
 
+// return the list of products filtered based on search
 function filterBySearch() {
   const searchInput = document.getElementById("search-bar").value.toLowerCase();
 
@@ -150,6 +151,7 @@ function filterBySearch() {
   showMenu(filteredProducts);
 }
 
+// return the list of products filtered based on different sort
 function filterBySort() {
   const sortBy = document.getElementById("sortby").value;
   let sortedProducts;
@@ -201,9 +203,33 @@ function callEventListeners() {
     filterBySort();
   });
 
-  $('#cart-container').on('click', '.remove-icon', function() {
-    removeFromCart();
+  $('#cart-container').on('click', '.remove-icon', function () {
+    const itemName = $(this).data('name');
+    removeFromCart(itemName);
   });
+
+  // For drag over
+  $('#cart-container').on('dragover', function (e) {
+    e.preventDefault(); // This allows us to drop.
+  });
+
+  // For drop
+  $('#cart-container').on('drop', function (e) {
+    e.preventDefault(); // Prevent default action (open as link for some elements)
+
+    // Get the id of the product being dragged
+    const productId = e.originalEvent.dataTransfer.getData("text");
+
+    // Find the product in DB.products by its nr (number)
+    const productToAdd = DB.products.find(product => product.nr === productId);
+
+    // Call addToCart function if product is found
+    if (productToAdd) {
+      addToCart(productToAdd.nr, productToAdd.name, productToAdd.price);
+    }
+  });
+
+
 }
 
 function fetchMenu() {
@@ -261,7 +287,7 @@ function updateCartUI() {
       <li class="cart-item">
       ${item.quantity}x ${item.name}
       <p class="item-price"> ${item.price}SEK </p>
-      <span class="material-icons remove-icon">cancel</span>
+      <span class="material-icons remove-icon" data-name="${item.name}">cancel</span>
       </li>
       `);
     });
@@ -318,7 +344,7 @@ function updateTotalPrice() {
   document.getElementById("totalPrice").textContent = totalPrice;
 }
 
-function showCart() {}
+function showCart() { }
 
 function fetchCart() {
   updateCartUI();
@@ -327,3 +353,17 @@ function fetchCart() {
 
 
 // Other event listeners can go here
+
+// Function to remove a product from the shopping cart
+function removeFromCart(name) {
+  const itemIndex = cart.findIndex((item) => item.name === name);
+
+  if (itemIndex > -1) {
+    if (cart[itemIndex].quantity > 1) {
+      cart[itemIndex].quantity -= 1; // Decrease the item's quantity by 1 if more than 1
+    } else {
+      cart.splice(itemIndex, 1); // Remove the item from the cart if quantity is 1
+    }
+    updateCartUI(); // Update the cart UI to reflect the changes
+  }
+}
