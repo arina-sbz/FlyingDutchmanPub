@@ -3,11 +3,14 @@ import { DB } from "./model.js";
 // global variables
 let cart = [];
 let role = "";
+let userFullName = "";
 
 $(document).ready(function () {
   renderApp();
+  showLandingPage();
   callEventListeners();
   checkAuthentication();
+  updateWelcomeText();
 });
 
 // function to render the app at the beggining
@@ -17,6 +20,25 @@ function renderApp() {
 }
 
 // ******Functions******
+// landing page
+function showLandingPage() {
+  $("#landing").hide();
+  $("#landing").append(
+    `
+    <div class="landing-container">
+    <div class="landing-text">
+      <p class="welcome">Welcome to the </p>
+      <p class="pub-name">Flying Dutchman</p>
+      <img src="assets/images/logo.png" alt="pub" class="pub-image">
+      <button type="button" class="primary-btn" id="enter-pub">MENU</button>
+    </div>
+  </div>
+    `
+  );
+  $("#landing").show();
+  $("#app").hide();
+}
+
 // Menu
 function returnFilterButtons() {
   var categories = ["All", "Beer", "Wine", "Spirit"];
@@ -42,30 +64,36 @@ function showMenu(filteredProducts) {
     <div class="product-item" draggable="true" id="${product.nr}">
         <h3 class="product-name">${product.name}</h3>
         <p class="product-price">${product.price} kr</p>
-        ${product.alcoholstrength
-        ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
-        : ""
-      }
-        ${product.category
-        ? `<p class="product-category">${product.category}</p>`
-        : ""
-      }
-        ${product.packaging
-        ? `<p class="packaging">${product.packaging}</p>`
-        : ""
-      }
-        ${product.productionyear
-        ? `<p class="product-year">${product.productionyear}</p>`
-        : ""
-      }
-        ${product.producer
-        ? `<p class="product-producer">${product.producer}</p>`
-        : ""
-      }
-        ${product.countryoforiginlandname
-        ? `<p>${product.countryoforiginlandname}</p>`
-        : ""
-      }
+        ${
+          product.alcoholstrength
+            ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
+            : ""
+        }
+        ${
+          product.category
+            ? `<p class="product-category">${product.category}</p>`
+            : ""
+        }
+        ${
+          product.packaging
+            ? `<p class="packaging">${product.packaging}</p>`
+            : ""
+        }
+        ${
+          product.productionyear
+            ? `<p class="product-year">${product.productionyear}</p>`
+            : ""
+        }
+        ${
+          product.producer
+            ? `<p class="product-producer">${product.producer}</p>`
+            : ""
+        }
+        ${
+          product.countryoforiginlandname
+            ? `<p>${product.countryoforiginlandname}</p>`
+            : ""
+        }
     </div>
 `);
     // Bind the click event to this specific product item
@@ -246,10 +274,16 @@ function updateCartUI() {
       <label>
         <input type="radio" name="service" value="bar"> Bar Pick-Up
       </label>
-      <label>
-        <input type="radio" name="service" value="fridge"> Fridge Self-Service
-        <p class="combination">Combination: 35-16-08</p>
-      </label>
+      ${
+        role == 3
+          ? `
+            <label>
+              <input type="radio" name="service" value="fridge"> Fridge Self-Service
+              <p class="combination">Combination: 35-16-08</p>
+            </label>
+      `
+          : ""
+      }
     </div>
     <div class="table-number">
     <label>
@@ -259,29 +293,13 @@ function updateCartUI() {
     </div>
     <div class="total-section">
       <span>TOTAL</span>
-      <span class="total-price">${updateTotalPrice()}SEK</span>
+      <span class="total-price">${updateTotalPriceDisplay()}</span>
     </div>
     
-    <div class="payment-options">
-      <label>
-        <input type="radio" name="payment" value="full"> Pay in Full
-      </label>
-      <label>
-        <input type="radio" name="payment" value="split"> Split Bill
-        <input type="text" class="split-amount">
-      </label>
-    </div>
-    
-
-    <div class="amount-due">
-      <span>AMOUNT DUE</span>
-      <span class="due-price"></span>
-    </div>
-
     <div class="cart-buttons">
     ${
       role == 3
-        ? '<button type="button" id="submit-vip" class="secondary-btn">Submit & Pay</button>'
+        ? '<button type="button" id="submit-vip" class="secondary-btn">Place Order</button>'
         : '<button type="button" id="place-order" class="secondary-btn">Place Order</button>'
     }
     <button type="button" id="clear-cart" class="red-btn">Clear Cart</button>
@@ -292,52 +310,60 @@ function updateCartUI() {
     $("#clear-cart").on("click", function () {
       clearCart();
     });
-    
-    manageAmountDue();
-    updateAmountDue();
+
+    $("#submit-vip").on("click", function () {
+      openPayment();
+    });
+
+    $("#place-order").on("click", function () {
+      placeOrder();
+    });
+
+    // manageAmountDue();
+    // updateAmountDue();
     // Update the total price in the UI
     updateTotalPrice();
     updateTotalPriceDisplay();
   }
 }
 
-function manageAmountDue() {
-  // Select the radio buttons and the "amount-due" section
-  var paymentOptions = document.querySelectorAll('input[name="payment"]');
-  var amountDueSection = document.querySelector(".amount-due");
+// function manageAmountDue() {
+//   // Select the radio buttons and the "amount-due" section
+//   var paymentOptions = document.querySelectorAll('input[name="payment"]');
+//   var amountDueSection = document.querySelector(".amount-due");
 
-  // Add event listener to the radio buttons
-  paymentOptions.forEach(function (radio) {
-    radio.addEventListener("change", function () {
-      // Check the value of the selected radio button
-      if (this.value === "split") {
-        // If the value is "split", show the "amount-due" section
-        amountDueSection.style.display = "block";
-      } else {
-        // Otherwise, hide it
-        amountDueSection.style.display = "none";
-      }
-    });
-  });
+//   // Add event listener to the radio buttons
+//   paymentOptions.forEach(function (radio) {
+//     radio.addEventListener("change", function () {
+//       // Check the value of the selected radio button
+//       if (this.value === "split") {
+//         // If the value is "split", show the "amount-due" section
+//         amountDueSection.style.display = "block";
+//       } else {
+//         // Otherwise, hide it
+//         amountDueSection.style.display = "none";
+//       }
+//     });
+//   });
 
-  // Initially hide the "amount-due" section
-  amountDueSection.style.display = "none";
-}
+//   // Initially hide the "amount-due" section
+//   amountDueSection.style.display = "none";
+// }
 
-function updateAmountDue() {
-  const numberOfPeople = parseFloat($('.split-amount').val());
-  const totalAmount = updateTotalPrice(); // Ensure this function returns the current total price of the cart
+// function updateAmountDue() {
+//   const numberOfPeople = parseFloat($('.split-amount').val());
+//   const totalAmount = updateTotalPrice(); // Ensure this function returns the current total price of the cart
 
-  // Validate the input to make sure it is a number and greater than 0
-  if (!isNaN(numberOfPeople) && numberOfPeople > 0) {
-    const dueAmountPerPerson = totalAmount / numberOfPeople;
-    // Update the UI to display the due amount per person
-    $('.due-price').text(`${dueAmountPerPerson.toFixed(2)} SEK per person`);
-  } else {
-    // If the input is invalid, you can reset the displayed due amount or show an error message
-    $('.due-price').text(`Invalid input`);
-  }
-}
+//   // Validate the input to make sure it is a number and greater than 0
+//   if (!isNaN(numberOfPeople) && numberOfPeople > 0) {
+//     const dueAmountPerPerson = totalAmount / numberOfPeople;
+//     // Update the UI to display the due amount per person
+//     $('.due-price').text(`${dueAmountPerPerson.toFixed(2)} SEK per person`);
+//   } else {
+//     // If the input is invalid, you can reset the displayed due amount or show an error message
+//     $('.due-price').text(`Invalid input`);
+//   }
+// }
 
 // Function to update the total price in the UI
 function updateTotalPrice() {
@@ -347,7 +373,7 @@ function updateTotalPrice() {
 function updateTotalPriceDisplay() {
   const totalPriceElement = document.querySelector(".total-price");
   if (totalPriceElement) {
-    totalPriceElement.textContent = `${updateTotalPrice()}`;
+    totalPriceElement.textContent = `${updateTotalPrice()} SEK`;
   }
 }
 
@@ -389,6 +415,16 @@ function getOrderNumber() {
 function placeOrder() {
   if (cart.length > 0) {
     const orderNumber = getOrderNumber();
+    DB.orders.push({
+      order_nr: orderNumber,
+      user_id: localStorage.getItem("userId")
+        ? localStorage.getItem("userId")
+        : "",
+      table_number: $("#table-number").val(),
+      items: cart,
+      amount: updateTotalPrice(),
+      pickup: $("input[name='service']:checked").val(),
+    });
     alert(`Order placed successfully. Your order number is ${orderNumber}`);
     clearCart();
   } else {
@@ -398,6 +434,31 @@ function placeOrder() {
   }
 }
 
+function openPayment() {
+  $("#payment-modal").empty(); // Clear the modal content first
+  $("#payment-modal").append(
+    `<form class="modal-content" id="payment-form">
+    <label for="card-number">Card Number</label>
+    <input type="text" id="card-number" placeholder="Enter Card Number" name="card-number" required>
+
+    <label for="cvv">CVV</label>
+    <input type="text" id="cvv" placeholder="Enter CVV" name="cvv" required>
+
+    <label for="expiry-date">Expiry Date</label>
+    <input type="text" id="expiry-date" placeholder="Enter Expiry Date" name="expiry-date" required>
+
+    <button type="submit" class="secondary-btn">Pay</button>
+  </form>`
+  );
+  $("#payment-modal").show(); // Show the modal
+
+  // Attach the event listener here, after the form is created
+  $("#payment-form").on("submit", function (e) {
+    e.preventDefault(); // Prevent the default form submit action
+    placeOrder();
+    $("#payment-modal").hide();
+  });
+}
 // Function to clear the shopping cart
 function clearCart() {
   cart = [];
@@ -438,8 +499,14 @@ function login() {
     $("#login-modal-container").hide();
     localStorage.setItem("username", username);
     localStorage.setItem("role", user.credentials);
+    localStorage.setItem("userId", user.user_id);
+    localStorage.setItem(
+      "userFullName",
+      user.first_name + " " + user.last_name
+    );
     $(".login-btn").hide();
     $(".logout-btn").show();
+    updateWelcomeText();
   } else {
     alert("Invalid username or password. Please try again.");
   }
@@ -447,9 +514,12 @@ function login() {
 
 function logout() {
   localStorage.removeItem("username");
+  localStorage.removeItem("userFullName");
   localStorage.removeItem("role");
+  localStorage.removeItem("userId");
   $(".login-btn").show();
   $(".logout-btn").hide();
+  updateWelcomeText();
 }
 
 function validateUser(username, password) {
@@ -468,6 +538,13 @@ function validateUser(username, password) {
 function checkAuthentication() {
   if (localStorage.getItem("username")) {
     role = localStorage.getItem("role");
+    // $("#welcome-container").append(`
+    //     <p>Welcome to Flying Dutchman Pub ${
+    //       localStorage.getItem("userFullName")
+    //         ? localStorage.getItem("userFullName")
+    //         : ""
+    //     }!</p>
+    //     <p> Enjoy our wide range of drinks and have a great time!</p>`);
     $(".login-btn").hide();
     $(".logout-btn").show();
   } else {
@@ -476,21 +553,28 @@ function checkAuthentication() {
   }
 }
 
+function updateWelcomeText() {
+  $("#welcome-container").empty();
+  $("#welcome-container").append(`
+      <p>Welcome to Flying Dutchman Pub ${
+        localStorage.getItem("userFullName")
+          ? localStorage.getItem("userFullName")
+          : ""
+      }!</p>
+      <p> Enjoy our wide range of drinks and have a great time!</p>`);
+}
+
 function callEventListeners() {
+  $("#enter-pub").on("click", function () {
+    $("#landing").hide();
+    $("#app").show();
+  });
   $(".login-btn").on("click", function () {
     openLogin();
   });
 
   $(".logout-btn").on("click", function () {
     logout();
-  });
-
-  $("#submit-vip").on("click", function () {
-    submitVip();
-  });
-
-  $("#place-order").on("click", function () {
-    placeOrder();
   });
 
   $("#gluten").on("change", function () {
@@ -549,5 +633,5 @@ function callEventListeners() {
     removeFromCart(itemNr);
   });
 
-  $(".split-amount").on("input", updateAmountDue);
+  // $(".split-amount").on("input", updateAmountDue);
 }

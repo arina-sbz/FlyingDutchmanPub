@@ -24,6 +24,35 @@
   font-family: "Fira Sans", sans-serif;
 }
 
+/* landing page */
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.landing-container .welcome {
+  font-size: 60px;
+  font-weight: bold;
+}
+
+.landing-container .pub-name {
+  font-size: 72px;
+  font-weight: bold;
+}
+
+.landing-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 /* primary button */
 .primary-btn {
   background-color: var(--white-color);
@@ -104,7 +133,8 @@
 
 /* ***********LOGIN************* */
 /* The Modal (background) */
-#login-modal {
+#login-modal,
+#payment-modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
@@ -113,8 +143,8 @@
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
 /* Modal Content/Box */
@@ -125,9 +155,6 @@
   border: 1px solid #888;
   width: 60%;
   border-radius: 15px;
-}
-
-.modal-content {
   display: flex;
   flex-direction: column;
 }
@@ -147,12 +174,25 @@
   align-self: flex-end;
 }
 
-.logout-btn{
+.logout-btn {
   display: none;
 }
 
 /* ******************************* */
 /* ***********MENU************* */
+/* Welcome Text Section */
+#welcome-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  font-size: 24px;
+  font-weight: 500;
+  padding: 15px;
+}
+/* ******************************* */
 /* ***********FILTERING SECTION************* */
 #filter-section {
   display: grid;
@@ -173,6 +213,45 @@
 .filter-checkboxes .gluten-checkbox {
   margin-right: 15px;
 }
+.filter-2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin-right: 10px;
+}
+.search-bar {
+  position: relative;
+}
+
+#search-bar {
+  width: 26rem;
+  padding-right: 40px;
+  padding: 12px;
+  border-radius: 10px;
+  background-color: var(--gray-color);
+  border: none;
+  font-size: 20px;
+  margin-top: 12px;
+}
+
+.search-bar button {
+  position: absolute;
+  top: 25px;
+  right: 15px;
+  border: none;
+  background: none;
+}
+.sort-dropdown #sortby {
+  margin-top: 5px;
+  width: 18rem;
+  padding: 12px;
+  border-radius: 10px;
+  background-color: var(--gray-color);
+  border: none;
+  font-size: 18px;
+}
+
 /* ******************************* */
 
 /* ***********PRODUCTS AND CART************* */
@@ -251,7 +330,7 @@
   margin: 10px 0;
 }
 
-.table-number{
+.table-number {
   display: flex;
 }
 
@@ -271,12 +350,13 @@
   margin-top: auto; /* This pushes the bottom section to the bottom of the flex container */
 }
 
-#place-order, #submit-vip {
+#place-order,
+#submit-vip {
   display: block; /* Make it a block element to enable margin auto */
   margin-right: 8px;
 }
 
-.cart-buttons{
+.cart-buttons {
   display: flex;
 }
 
