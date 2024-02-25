@@ -36,6 +36,10 @@
         <span class="material-symbols-outlined">language</span>
       </div>
     </div>
+    <div class="lang">
+      <span class="material-symbols-outlined">language</span>
+    </div>
+  </div>
 
     <!-- login modal -->
     <div class="modal-container" id="login-modal-container">
@@ -56,45 +60,46 @@
               Gluten Free
             </div>
 
-            <div class="tannin-checkbox">
-              <input type="checkbox" id="tannin" />
-              <span class="checkmark"></span>
-              Tannin Free
-            </div>
-          </div>
-        </div>
-        <div class="filter-2">
-          <div class="search-bar">
-            <input type="text" placeholder="Search..." id="search-bar" />
-            <button type="submit">
-              <span class="material-icons">search</span>
-            </button>
-          </div>
-          <div class="sort-dropdown">
-            <select name="sortby" id="sortby">
-              <option value="featured">Featured</option>
-              <option value="price_low_high">Price: Low to High</option>
-              <option value="price_high_low">Price: High to Low</option>
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
-            </select>
+          <div class="tannin-checkbox">
+            <input type="checkbox" id="tannin" />
+            <span class="checkmark"></span>
+            Tannin Free
           </div>
         </div>
       </div>
-      <!-- products section -->
-      <div class="products-cart">
-        <div id="products"></div>
-        <div id="cart-container">
-
+      <div class="filter-2">
+        <div class="search-bar">
+          <input type="text" placeholder="Search..." id="search-bar" />
+          <button type="submit">
+            <span class="material-icons">search</span>
+          </button>
+        </div>
+        <div class="sort-dropdown">
+          <select name="sortby" id="sortby">
+            <option value="featured">All</option>
+            <option value="price_low_high">Price: Low to High</option>
+            <option value="price_high_low">Price: High to Low</option>
+            <option value="alcohol_low_high">Alcohol: Low to High</option>
+            <option value="alcohol_high_low">Alcohol: High to Low</option>
+          </select>
         </div>
       </div>
     </div>
+    <!-- products section -->
+    <div class="products-cart">
+      <div id="products"></div>
+      <div id="cart-container">
 
-    <!-- staff pages here -->
-    <!-- ********************** -->
+      </div>
+    </div>
+  </div>
 
-    <script type="module" src="model.js"></script>
-    <script type="module" src="controller.js"></script>
-    <script type="module" src="Menu_script.js"></script>
-  </body>
+  <!-- staff pages here -->
+  <!-- ********************** -->
+
+  <script type="module" src="model.js"></script>
+  <script type="module" src="controller.js"></script>
+  <script type="module" src="Menu_script.js"></script>
+</body>
+
 </html>
