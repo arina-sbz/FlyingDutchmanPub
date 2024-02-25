@@ -174,20 +174,21 @@ function filterBySort() {
     case "price_high_low":
       sortedProducts = DB.products.sort((a, b) => b.price - a.price);
       break;
-    case "newest":
-      sortedProducts = DB.products.sort(
-        (a, b) =>
-          new Date(b.introduced.substring(0, 4)) -
-          new Date(a.introduced.substring(0, 4))
-      );
+    case "alcohol_low_high":
+      sortedProducts = DB.products.sort((a, b) => {
+        const alcoholA = parseFloat(a.alcoholstrength.replace('%', ''));
+        const alcoholB = parseFloat(b.alcoholstrength.replace('%', ''));
+        return alcoholA - alcoholB;
+      });
       break;
-    case "oldest":
-      sortedProducts = DB.products.sort(
-        (a, b) =>
-          new Date(a.introduced.substring(0, 4)) -
-          new Date(b.introduced.substring(0, 4))
-      );
+    case "alcohol_high_low":
+      sortedProducts = DB.products.sort((a, b) => {
+        const alcoholA = parseFloat(a.alcoholstrength.replace('%', ''));
+        const alcoholB = parseFloat(b.alcoholstrength.replace('%', ''));
+        return alcoholB - alcoholA;
+      });
       break;
+
     default:
       sortedProducts = DB.products;
       break;
