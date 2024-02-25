@@ -141,7 +141,6 @@
 #cart-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* This will push the content to the top and bottom */
   background-color: var(--gray-color);
   flex: 1;
   max-width: 30%;
@@ -200,6 +199,8 @@
   padding: 10px 0;
   border-top: 2px solid var(--primary-color);
   border-bottom: 2px solid var(--primary-color);
+  font-size: 20px;
+  font-weight: 500;
 }
 .bottom-section {
   margin-top: auto; /* This pushes the bottom section to the bottom of the flex container */

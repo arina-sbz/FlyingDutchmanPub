@@ -182,30 +182,6 @@ function filterBySort() {
   showMenu(sortedProducts);
 }
 
-function callEventListeners() {
-  // Event listener for gluten checkbox changes
-  $("#gluten").on("change", function () {
-    filterByAllergic("gluten");
-  });
-
-  // Event listener for tannin checkbox changes
-  $("#tannin").on("change", function () {
-    filterByAllergic("tannin");
-  });
-
-  $("#search-bar").on("input", function () {
-    filterBySearch();
-  });
-
-  $("#sortby").on("change", function () {
-    filterBySort();
-  });
-
-  $('#cart-container').on('click', '.remove-icon', function() {
-    removeFromCart();
-  });
-}
-
 function fetchMenu() {
   returnFilterButtons();
   filterByType("All");
@@ -261,7 +237,7 @@ function updateCartUI() {
       <li class="cart-item">
       ${item.quantity}x ${item.name}
       <p class="item-price"> ${item.price}SEK </p>
-      <span class="material-icons remove-icon">cancel</span>
+      <span class="material-icons remove-icon" data-name="${item.name}">cancel</span>
       </li>
       `);
     });
@@ -283,47 +259,135 @@ function updateCartUI() {
     
     <div class="total-section">
       <span>TOTAL</span>
-      <span class="total-price">64:-</span>
+      <span class="total-price">${updateTotalPrice()}</span>
     </div>
     
     <div class="payment-options">
       <label>
-        <input type="radio" name="payment" value="full" checked> Pay in Full
+        <input type="radio" name="payment" value="full"> Pay in Full
       </label>
       <label>
         <input type="radio" name="payment" value="split"> Split Bill
-        <input type="text" class="split-amount" value="44:-">
+        <input type="text" class="split-amount">
       </label>
     </div>
     
+
     <div class="amount-due">
       <span>AMOUNT DUE</span>
-      <span class="due-price">44:-</span>
+      <span class="due-price"></span>
     </div>
     
     <button type="button" id="place-order" class="secondary-btn">PLACE ORDER</button>
     </div>
   `);
+
+    manageAmountDue();
+    updateAmountDue();
     // Update the total price in the UI
     updateTotalPrice();
+    updateTotalPriceDisplay();
+  }
+}
+
+function removeFromCart(name) {
+  const itemIndex = cart.findIndex((item) => item.name === name);
+
+  if (itemIndex > -1) {
+    if (cart[itemIndex].quantity > 1) {
+      cart[itemIndex].quantity -= 1; // Decrease the item's quantity by 1 if more than 1
+    } else {
+      cart.splice(itemIndex, 1); // Remove the item from the cart if quantity is 1
+    }
+    updateCartUI(); // Update the cart UI to reflect the changes
+  }
+}
+
+function manageAmountDue() {
+  // Select the radio buttons and the "amount-due" section
+  var paymentOptions = document.querySelectorAll('input[name="payment"]');
+  var amountDueSection = document.querySelector(".amount-due");
+
+  // Add event listener to the radio buttons
+  paymentOptions.forEach(function (radio) {
+    radio.addEventListener("change", function () {
+      // Check the value of the selected radio button
+      if (this.value === "split") {
+        // If the value is "split", show the "amount-due" section
+        amountDueSection.style.display = "block";
+      } else {
+        // Otherwise, hide it
+        amountDueSection.style.display = "none";
+      }
+    });
+  });
+
+  // Initially hide the "amount-due" section
+  amountDueSection.style.display = "none";
+}
+
+function updateAmountDue() {
+  // Select the "due-price" span, the total price element, and the input field
+  var duePriceSpan = document.querySelector(".due-price");
+  var totalPriceElement = document.querySelector(".total-price");
+  var splitAmountInput = document.querySelector(".split-amount");
+
+  // Get the value from the input field
+  var amountDue = parseFloat(splitAmountInput.value);
+
+  // Check if the split payment option is selected and the value is a valid number
+  var paymentOption = document.querySelector('input[name="payment"]:checked');
+  if (paymentOption.value === "split" && !isNaN(amountDue)) {
+    // Update the "due-price" span with the amount due
+    duePriceSpan.textContent = amountDue;
+
+    // Subtract the amount due from the total price
+    var totalPrice = parseFloat(totalPriceElement.textContent);
+    totalPrice -= amountDue;
+
+    // Update the total price element
+    totalPriceElement.textContent = totalPrice.toFixed(2);
   }
 }
 
 // Function to update the total price in the UI
 function updateTotalPrice() {
-  const totalPrice = cart.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-  document.getElementById("totalPrice").textContent = totalPrice;
+  return cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 }
 
-function showCart() {}
+function updateTotalPriceDisplay() {
+  const totalPriceElement = document.querySelector(".total-price");
+  if (totalPriceElement) {
+    totalPriceElement.textContent = `${updateTotalPrice()} SEK`;
+  }
+}
 
 function fetchCart() {
   updateCartUI();
 }
 
-
-
 // Other event listeners can go here
+function callEventListeners() {
+  // Event listener for gluten checkbox changes
+  $("#gluten").on("change", function () {
+    filterByAllergic("gluten");
+  });
+
+  // Event listener for tannin checkbox changes
+  $("#tannin").on("change", function () {
+    filterByAllergic("tannin");
+  });
+
+  $("#search-bar").on("input", function () {
+    filterBySearch();
+  });
+
+  $("#sortby").on("change", function () {
+    filterBySort();
+  });
+
+  $("#cart-container").on("click", ".remove-icon", function () {
+    const itemName = $(this).data("name");
+    removeFromCart(itemName);
+  });
+}
