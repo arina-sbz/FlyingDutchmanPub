@@ -303,18 +303,6 @@ function updateCartUI() {
   }
 }
 
-function removeFromCart(name) {
-  const itemIndex = cart.findIndex((item) => item.name === name);
-
-  if (itemIndex > -1) {
-    if (cart[itemIndex].quantity > 1) {
-      cart[itemIndex].quantity -= 1; // Decrease the item's quantity by 1 if more than 1
-    } else {
-      cart.splice(itemIndex, 1); // Remove the item from the cart if quantity is 1
-    }
-    updateCartUI(); // Update the cart UI to reflect the changes
-  }
-}
 
 function manageAmountDue() {
   // Select the radio buttons and the "amount-due" section
