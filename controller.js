@@ -40,30 +40,36 @@ function showMenu(filteredProducts) {
     <div class="product-item" draggable="true" id="${product.nr}">
         <h3 class="product-name">${product.name}</h3>
         <p class="product-price">${product.price} kr</p>
-        ${product.alcoholstrength
-        ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
-        : ""
-      }
-        ${product.category
-        ? `<p class="product-category">${product.category}</p>`
-        : ""
-      }
-        ${product.packaging
-        ? `<p class="packaging">${product.packaging}</p>`
-        : ""
-      }
-        ${product.productionyear
-        ? `<p class="product-year">${product.productionyear}</p>`
-        : ""
-      }
-        ${product.producer
-        ? `<p class="product-producer">${product.producer}</p>`
-        : ""
-      }
-        ${product.countryoforiginlandname
-        ? `<p>${product.countryoforiginlandname}</p>`
-        : ""
-      }
+        ${
+          product.alcoholstrength
+            ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
+            : ""
+        }
+        ${
+          product.category
+            ? `<p class="product-category">${product.category}</p>`
+            : ""
+        }
+        ${
+          product.packaging
+            ? `<p class="packaging">${product.packaging}</p>`
+            : ""
+        }
+        ${
+          product.productionyear
+            ? `<p class="product-year">${product.productionyear}</p>`
+            : ""
+        }
+        ${
+          product.producer
+            ? `<p class="product-producer">${product.producer}</p>`
+            : ""
+        }
+        ${
+          product.countryoforiginlandname
+            ? `<p>${product.countryoforiginlandname}</p>`
+            : ""
+        }
     </div>
 `);
     // Bind the click event to this specific product item
@@ -77,8 +83,8 @@ function showMenu(filteredProducts) {
       e.originalEvent.dataTransfer.setData("text", product.nr);
     });
 
-    $('body').on('dragstart', '.cart-item', function (e) {
-      const itemNr = $(this).data('nr');
+    $("body").on("dragstart", ".cart-item", function (e) {
+      const itemNr = $(this).data("nr");
       e.originalEvent.dataTransfer.setData("text", itemNr);
     });
 
@@ -189,69 +195,6 @@ function filterBySort() {
   showMenu(sortedProducts);
 }
 
-<<<<<<< HEAD
-=======
-function callEventListeners() {
-  // Event listener for gluten checkbox changes
-  $("#gluten").on("change", function () {
-    filterByAllergic("gluten");
-  });
-
-  // Event listener for tannin checkbox changes
-  $("#tannin").on("change", function () {
-    filterByAllergic("tannin");
-  });
-
-  $("#search-bar").on("input", function () {
-    filterBySearch();
-  });
-
-  $("#sortby").on("change", function () {
-    filterBySort();
-  });
-
-  $('#cart-container').on('click', '.remove-icon', function () {
-    const itemNr = $(this).data('nr');
-    removeFromCart(itemNr);
-  });
-
-  // For drag over
-  $('#cart-container').on('dragover', function (e) {
-    e.preventDefault(); // This allows us to drop.
-  });
-
-  // For drop
-  $('#cart-container').on('drop', function (e) {
-    e.preventDefault(); // Prevent default action (open as link for some elements)
-
-    // Get the id of the product being dragged
-    const productId = e.originalEvent.dataTransfer.getData("text");
-
-    // Find the product in DB.products by its nr (number)
-    const productToAdd = DB.products.find(product => product.nr === productId);
-
-    // Call addToCart function if product is found
-    if (productToAdd) {
-      addToCart(productToAdd.nr, productToAdd.name, productToAdd.price);
-    }
-  });
-
-  // For drag over from cart
-  $('#products').on('dragover', function (e) {
-    e.preventDefault(); // Allow drop
-  });
-
-  $('#products').on('drop', function (e) {
-    e.preventDefault();
-    const itemNr = e.originalEvent.dataTransfer.getData("text");
-    removeFromCart(itemNr);
-  });
-
-
-
-}
-
->>>>>>> 5080a2fcd0249002d1266251fc49a9da89eb196e
 function fetchMenu() {
   returnFilterButtons();
   filterByType("All");
@@ -307,11 +250,7 @@ function updateCartUI() {
       <li class="cart-item" draggable="true" data-nr="${item.nr}">
       ${item.quantity}x ${item.name}
       <p class="item-price"> ${item.price}SEK </p>
-<<<<<<< HEAD
-      <span class="material-icons remove-icon" data-name="${item.name}">cancel</span>
-=======
       <span class="material-icons remove-icon" data-nr="${item.nr}">cancel</span>
->>>>>>> 5080a2fcd0249002d1266251fc49a9da89eb196e
       </li>
       `);
     });
@@ -429,23 +368,31 @@ function updateTotalPrice() {
   return cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 }
 
-<<<<<<< HEAD
 function updateTotalPriceDisplay() {
   const totalPriceElement = document.querySelector(".total-price");
   if (totalPriceElement) {
     totalPriceElement.textContent = `${updateTotalPrice()} SEK`;
   }
 }
-=======
-function showCart() { }
->>>>>>> 5080a2fcd0249002d1266251fc49a9da89eb196e
+
+// Function to remove a product from the shopping cart
+function removeFromCart(nr) {
+  const itemIndex = cart.findIndex((item) => item.nr == nr);
+
+  if (itemIndex > -1) {
+    if (cart[itemIndex].quantity > 1) {
+      cart[itemIndex].quantity -= 1; // Decrease the item's quantity by 1 if more than 1
+    } else {
+      cart.splice(itemIndex, 1); // Remove the item from the cart if quantity is 1
+    }
+    updateCartUI(); // Update the cart UI to reflect the changes
+  }
+}
 
 function fetchCart() {
   updateCartUI();
 }
 
-// Other event listeners can go here
-<<<<<<< HEAD
 function callEventListeners() {
   // Event listener for gluten checkbox changes
   $("#gluten").on("change", function () {
@@ -466,22 +413,41 @@ function callEventListeners() {
   });
 
   $("#cart-container").on("click", ".remove-icon", function () {
-    const itemName = $(this).data("name");
-    removeFromCart(itemName);
+    const itemNr = $(this).data("nr");
+    removeFromCart(itemNr);
   });
-=======
 
-// Function to remove a product from the shopping cart
-function removeFromCart(nr) {
-  const itemIndex = cart.findIndex((item) => item.nr == nr);
+  // For drag over
+  $("#cart-container").on("dragover", function (e) {
+    e.preventDefault(); // This allows us to drop.
+  });
 
-  if (itemIndex > -1) {
-    if (cart[itemIndex].quantity > 1) {
-      cart[itemIndex].quantity -= 1; // Decrease the item's quantity by 1 if more than 1
-    } else {
-      cart.splice(itemIndex, 1); // Remove the item from the cart if quantity is 1
+  // For drop
+  $("#cart-container").on("drop", function (e) {
+    e.preventDefault(); // Prevent default action (open as link for some elements)
+
+    // Get the id of the product being dragged
+    const productId = e.originalEvent.dataTransfer.getData("text");
+
+    // Find the product in DB.products by its nr (number)
+    const productToAdd = DB.products.find(
+      (product) => product.nr === productId
+    );
+
+    // Call addToCart function if product is found
+    if (productToAdd) {
+      addToCart(productToAdd.nr, productToAdd.name, productToAdd.price);
     }
-    updateCartUI(); // Update the cart UI to reflect the changes
-  }
->>>>>>> 5080a2fcd0249002d1266251fc49a9da89eb196e
+  });
+
+  // For drag over from cart
+  $("#products").on("dragover", function (e) {
+    e.preventDefault(); // Allow drop
+  });
+
+  $("#products").on("drop", function (e) {
+    e.preventDefault();
+    const itemNr = e.originalEvent.dataTransfer.getData("text");
+    removeFromCart(itemNr);
+  });
 }
