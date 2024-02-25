@@ -891,7 +891,7 @@ export var DB = {
   ],
   orders: [
     // {
-    //   order_id: "0",
+    //   order_nr: "0",
     //   user_id: "0",
     //   table_number: "0",
     //   items: [],

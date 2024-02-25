@@ -2,10 +2,12 @@ import { DB } from "./model.js";
 
 // global variables
 let cart = [];
+let role = "";
 
 $(document).ready(function () {
   renderApp();
   callEventListeners();
+  checkAuthentication();
 });
 
 // function to render the app at the beggining
@@ -201,21 +203,6 @@ function fetchMenu() {
   $("#menu-container").show();
 }
 
-function getOrderNumber() {
-  let orderNumber = localStorage.getItem("orderNumber");
-
-  if (!orderNumber) {
-    orderNumber = "001";
-  } else {
-    let nextOrderNumber = parseInt(orderNumber) + 1;
-    orderNumber = nextOrderNumber.toString().padStart(3, "0");
-  }
-
-  // Update and store the order number in localStorage
-  localStorage.setItem("orderNumber", orderNumber);
-  return orderNumber;
-}
-
 // Function to add a product to the shopping cart
 function addToCart(nr, name, price) {
   const itemIndex = cart.findIndex((item) => item.nr === nr);
@@ -266,13 +253,18 @@ function updateCartUI() {
       </label>
       <label>
         <input type="radio" name="service" value="fridge"> Fridge Self-Service
-        <span class="combination">Combination: 35-16-08</span>
+        <p class="combination">Combination: 35-16-08</p>
       </label>
     </div>
-    
+    <div class="table-number">
+    <label>
+    <label>Table Number:</label>
+    <input type="text" id="table-number">  </label>
+   
+    </div>
     <div class="total-section">
       <span>TOTAL</span>
-      <span class="total-price">${updateTotalPrice()}</span>
+      <span class="total-price">${updateTotalPrice()}SEK</span>
     </div>
     
     <div class="payment-options">
@@ -290,11 +282,22 @@ function updateCartUI() {
       <span>AMOUNT DUE</span>
       <span class="due-price"></span>
     </div>
-    
-    <button type="button" id="place-order" class="secondary-btn">PLACE ORDER</button>
+
+    <div class="cart-buttons">
+    ${
+      role == 3
+        ? '<button type="button" id="submit-vip" class="secondary-btn">Submit & Pay</button>'
+        : '<button type="button" id="place-order" class="secondary-btn">Place Order</button>'
+    }
+    <button type="button" id="clear-cart" class="red-btn">Clear Cart</button>
+    </div>
     </div>
   `);
 
+    $("#clear-cart").on("click", function () {
+      clearCart();
+    });
+    
     manageAmountDue();
     updateAmountDue();
     // Update the total price in the UI
@@ -302,7 +305,6 @@ function updateCartUI() {
     updateTotalPriceDisplay();
   }
 }
-
 
 function manageAmountDue() {
   // Select the radio buttons and the "amount-due" section
@@ -359,7 +361,7 @@ function updateTotalPrice() {
 function updateTotalPriceDisplay() {
   const totalPriceElement = document.querySelector(".total-price");
   if (totalPriceElement) {
-    totalPriceElement.textContent = `${updateTotalPrice()} SEK`;
+    totalPriceElement.textContent = `${updateTotalPrice()}`;
   }
 }
 
@@ -381,8 +383,130 @@ function fetchCart() {
   updateCartUI();
 }
 
+// order
+function getOrderNumber() {
+  let orderNumber = localStorage.getItem("orderNumber");
+
+  if (!orderNumber) {
+    orderNumber = "001";
+  } else {
+    let nextOrderNumber = parseInt(orderNumber) + 1;
+    orderNumber = nextOrderNumber.toString().padStart(3, "0");
+  }
+
+  // Update and store the order number in localStorage
+  localStorage.setItem("orderNumber", orderNumber);
+  return orderNumber;
+}
+
+// Function to place an order
+function placeOrder() {
+  if (cart.length > 0) {
+    const orderNumber = getOrderNumber();
+    alert(`Order placed successfully. Your order number is ${orderNumber}`);
+    clearCart();
+  } else {
+    alert(
+      "Cart is empty. Please add items to your cart before placing an order."
+    );
+  }
+}
+
+// Function to clear the shopping cart
+function clearCart() {
+  cart = [];
+  updateCartUI();
+}
+
+// LOGIN
+function openLogin() {
+  $("#login-modal").empty(); // Clear the modal content first
+  $("#login-modal").append(
+    `<form class="modal-content" id="login-form"> 
+    <label for="uname">Username</label>
+    <input type="text" id="username" placeholder="Enter Username" name="username" required>
+
+    <label for="psw">Password</label>
+    <input type="password" id="password" placeholder="Enter Password" name="password" required>
+
+    <button type="submit" class="secondary-btn">Login</button>
+  </form>`
+  );
+  $("#login-modal").show(); // Show the modal
+
+  // Attach the event listener here, after the form is created
+  $("#login-form").on("submit", function (e) {
+    e.preventDefault(); // Prevent the default form submit action
+    login();
+  });
+}
+
+function login() {
+  const username = $("#username").val();
+  const password = $("#password").val();
+
+  if (validateUser(username, password)) {
+    var user = DB.users.find(
+      (user) => user.username === username && user.password === password
+    );
+    $("#login-modal-container").hide();
+    localStorage.setItem("username", username);
+    localStorage.setItem("role", user.credentials);
+    $(".login-btn").hide();
+    $(".logout-btn").show();
+  } else {
+    alert("Invalid username or password. Please try again.");
+  }
+}
+
+function logout() {
+  localStorage.removeItem("username");
+  localStorage.removeItem("role");
+  $(".login-btn").show();
+  $(".logout-btn").hide();
+}
+
+function validateUser(username, password) {
+  for (var i = 0; i < DB.users.length; i++) {
+    if (DB.users[i].username == username) {
+      if (DB.users[i].password == password) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+  return false;
+}
+
+function checkAuthentication() {
+  if (localStorage.getItem("username")) {
+    role = localStorage.getItem("role");
+    $(".login-btn").hide();
+    $(".logout-btn").show();
+  } else {
+    $(".login-btn").show();
+    $(".logout-btn").hide();
+  }
+}
+
 function callEventListeners() {
-  // Event listener for gluten checkbox changes
+  $(".login-btn").on("click", function () {
+    openLogin();
+  });
+
+  $(".logout-btn").on("click", function () {
+    logout();
+  });
+
+  $("#submit-vip").on("click", function () {
+    submitVip();
+  });
+
+  $("#place-order").on("click", function () {
+    placeOrder();
+  });
+
   $("#gluten").on("change", function () {
     filterByAllergic("gluten");
   });

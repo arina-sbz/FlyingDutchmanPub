@@ -48,6 +48,17 @@
   cursor: pointer;
 }
 
+/* red button */
+.red-btn {
+  background-color: var(--red-color);
+  border-radius: 10px;
+  color: var(--white-color);
+  font-weight: 700;
+  font-size: 24px;
+  padding: 1rem;
+  border: none;
+  cursor: pointer;
+}
 /* ***********HEADER************* */
 /* header style */
 #header {
@@ -91,6 +102,56 @@
 }
 /* ******************************* */
 
+/* ***********LOGIN************* */
+/* The Modal (background) */
+#login-modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 60%;
+  border-radius: 15px;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content label {
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 20px;
+  color: var(--primary-color);
+}
+.modal-content input {
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.modal-content button {
+  align-self: flex-end;
+}
+
+.logout-btn{
+  display: none;
+}
+
+/* ******************************* */
 /* ***********MENU************* */
 /* ***********FILTERING SECTION************* */
 #filter-section {
@@ -190,6 +251,10 @@
   margin: 10px 0;
 }
 
+.table-number{
+  display: flex;
+}
+
 .total-section,
 .amount-due {
   display: flex;
@@ -206,10 +271,13 @@
   margin-top: auto; /* This pushes the bottom section to the bottom of the flex container */
 }
 
-#place-order {
+#place-order, #submit-vip {
   display: block; /* Make it a block element to enable margin auto */
-  margin-left: auto; /* Auto margin on left */
-  margin-right: auto; /* Auto margin on right */
+  margin-right: 8px;
+}
+
+.cart-buttons{
+  display: flex;
 }
 
 .hr-style {
