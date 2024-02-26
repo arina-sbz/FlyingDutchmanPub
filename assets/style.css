@@ -277,6 +277,19 @@
   padding: 8px;
   border-radius: 10px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.product-image{
+  width: 100px;
+  filter: invert(100%);
+  margin-right: 10px;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
 }
 
 #cart-container {

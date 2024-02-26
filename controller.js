@@ -62,6 +62,14 @@ function showMenu(filteredProducts) {
     // Create the product item element
     const productItem = $(`
     <div class="product-item" draggable="true" id="${product.nr}">
+    <img src="assets/images/game-icons--${
+      product.type === "Wine"
+        ? "beer-bottle"
+        : product.type === "Beer"
+        ? "wine-glass"
+        : "martini"
+    }.svg" alt="${product.name}" class="product-image">
+<div class="product-info">
         <h3 class="product-name">${product.name}</h3>
         <p class="product-price">${product.price} kr</p>
         ${
@@ -94,8 +102,10 @@ function showMenu(filteredProducts) {
             ? `<p>${product.countryoforiginlandname}</p>`
             : ""
         }
+        </div>
     </div>
 `);
+
     // Bind the click event to this specific product item
     productItem.on("click", () => {
       addToCart(product.nr, product.name, product.price);
