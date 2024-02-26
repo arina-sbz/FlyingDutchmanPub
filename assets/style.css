@@ -270,6 +270,7 @@
 
 .product-item {
   width: calc(33.333% - 10px);
+  height: 200px !important;
   background-color: var(--primary-color);
   margin: 0 5px 5px 0;
   color: var(--white-color);
