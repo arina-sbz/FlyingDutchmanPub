@@ -62,46 +62,39 @@ function showMenu(filteredProducts) {
     // Create the product item element
     const productItem = $(`
     <div class="product-item" draggable="true" id="${product.nr}">
-    <img src="assets/images/game-icons--${
-      product.type === "Wine"
+    <img src="assets/images/game-icons--${product.type === "Wine"
         ? "beer-bottle"
         : product.type === "Beer"
-        ? "wine-glass"
-        : "martini"
-    }.svg" alt="${product.name}" class="product-image">
+          ? "wine-glass"
+          : "martini"
+      }.svg" alt="${product.name}" class="product-image">
 <div class="product-info">
         <h3 class="product-name">${product.name}</h3>
         <p class="product-price">${product.price} kr</p>
-        ${
-          product.alcoholstrength
-            ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
-            : ""
-        }
-        ${
-          product.category
-            ? `<p class="product-category">${product.category}</p>`
-            : ""
-        }
-        ${
-          product.packaging
-            ? `<p class="packaging">${product.packaging}</p>`
-            : ""
-        }
-        ${
-          product.productionyear
-            ? `<p class="product-year">${product.productionyear}</p>`
-            : ""
-        }
-        ${
-          product.producer
-            ? `<p class="product-producer">${product.producer}</p>`
-            : ""
-        }
-        ${
-          product.countryoforiginlandname
-            ? `<p>${product.countryoforiginlandname}</p>`
-            : ""
-        }
+        ${product.alcoholstrength
+        ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
+        : ""
+      }
+        ${product.category
+        ? `<p class="product-category">${product.category}</p>`
+        : ""
+      }
+        ${product.packaging
+        ? `<p class="packaging">${product.packaging}</p>`
+        : ""
+      }
+        ${product.productionyear
+        ? `<p class="product-year">${product.productionyear}</p>`
+        : ""
+      }
+        ${product.producer
+        ? `<p class="product-producer">${product.producer}</p>`
+        : ""
+      }
+        ${product.countryoforiginlandname
+        ? `<p>${product.countryoforiginlandname}</p>`
+        : ""
+      }
         </div>
     </div>
 `);
@@ -142,46 +135,27 @@ function filterByType(typeName) {
 }
 
 // return the list of products filtered based on gluten and tannin
-function filterByAllergic(type) {
-  let filteredProducts;
-  let isGlutenFreeChecked = document.getElementById("gluten").checked;
-  let isTanninFreeChecked = document.getElementById("tannin").checked;
+function filterByAllergic() {
+  let filteredProducts = DB.products; // Initially, no filtering is applied
 
-  if (
-    document.getElementById("gluten").checked &&
-    document.getElementById("tannin").checked
-  ) {
-    type = "both";
+  // Check the checkbox for each condition and apply the appropriate filter if it is ticked
+  if (document.getElementById("gluten").checked) {
+    filteredProducts = filteredProducts.filter(product => product.gluten == 0);
   }
 
-  if (type == "gluten") {
-    //  // Check the states of the gluten free and tannin free checkboxes
-    // Filter products based on the selected criteria
-    filteredProducts = DB.products.filter((product) => {
-      const meetsGlutenFree = isGlutenFreeChecked ? product.gluten == 0 : true;
-      // Return true if the product meets both conditions
-      return meetsGlutenFree;
-    });
-  } else if (type == "tannin") {
-    //  // Check the states of the gluten free and tannin free checkboxes
-
-    // Filter products based on the selected criteria
-    filteredProducts = DB.products.filter((product) => {
-      const meetsTanninFree = isTanninFreeChecked ? product.tannin == 0 : true;
-
-      // Return true if the product meets both conditions
-      return meetsTanninFree;
-    });
-  } else {
-    filteredProducts = DB.products.filter((product) => {
-      const meetsBoth =
-        isGlutenFreeChecked && isTanninFreeChecked
-          ? product.gluten == 0 && product.tannin == 0
-          : true;
-      // Return true if the product meets both conditions
-      return meetsBoth;
-    });
+  if (document.getElementById("tannin").checked) {
+    filteredProducts = filteredProducts.filter(product => product.tannin == 0);
   }
+
+  if (document.getElementById("organic").checked) {
+    filteredProducts = filteredProducts.filter(product => product.organic == 1);
+  }
+
+  if (document.getElementById("kosher").checked) {
+    filteredProducts = filteredProducts.filter(product => product.kosher == 1);
+  }
+
+
   showMenu(filteredProducts);
 }
 
@@ -284,15 +258,14 @@ function updateCartUI() {
       <label>
         <input type="radio" name="service" value="bar"> Bar Pick-Up
       </label>
-      ${
-        role == 3
-          ? `
+      ${role == 3
+        ? `
             <label>
               <input type="radio" name="service" value="fridge"> Fridge Self-Service
               <p class="combination">Combination: 35-16-08</p>
             </label>
       `
-          : ""
+        : ""
       }
     </div>
     <div class="table-number">
@@ -307,11 +280,10 @@ function updateCartUI() {
     </div>
     
     <div class="cart-buttons">
-    ${
-      role == 3
+    ${role == 3
         ? '<button type="button" id="submit-vip" class="secondary-btn">Place Order</button>'
         : '<button type="button" id="place-order" class="secondary-btn">Place Order</button>'
-    }
+      }
     <button type="button" id="clear-cart" class="red-btn">Clear Cart</button>
     </div>
     </div>
@@ -566,11 +538,10 @@ function checkAuthentication() {
 function updateWelcomeText() {
   $("#welcome-container").empty();
   $("#welcome-container").append(`
-      <p>Welcome to Flying Dutchman Pub ${
-        localStorage.getItem("userFullName")
-          ? localStorage.getItem("userFullName")
-          : ""
-      }!</p>
+      <p>Welcome to Flying Dutchman Pub ${localStorage.getItem("userFullName")
+      ? localStorage.getItem("userFullName")
+      : ""
+    }!</p>
       <p> Enjoy our wide range of drinks and have a great time!</p>`);
 }
 
@@ -588,12 +559,22 @@ function callEventListeners() {
   });
 
   $("#gluten").on("change", function () {
-    filterByAllergic("gluten");
+    filterByAllergic();
   });
 
   // Event listener for tannin checkbox changes
   $("#tannin").on("change", function () {
-    filterByAllergic("tannin");
+    filterByAllergic();
+  });
+
+  // Event listener for organic checkbox changes
+  $("#organic").on("change", function () {
+    filterByAllergic();
+  });
+
+  // Event listener for kosher checkbox changes
+  $("#kosher").on("change", function () {
+    filterByAllergic();
   });
 
   $("#search-bar").on("input", function () {
