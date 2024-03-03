@@ -66,6 +66,10 @@ function returnFilterButtons() {
 function showMenu(filteredProducts) {
   const productsDiv = document.getElementById("products");
   productsDiv.innerHTML = ""; // Clear the products display
+  if (filteredProducts.length === 0) {
+    productsDiv.innerHTML = `<p class="no-products">No products found</p>`;
+  }
+
   // Iterate through filtered products and create elements for each
   filteredProducts.forEach((product) => {
     // Create the product item element
