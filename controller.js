@@ -4,6 +4,15 @@ import { DB } from "./model.js";
 let cart = [];
 let role = "";
 let userFullName = "";
+let currentFilters = {
+  type: "All",
+  search: "",
+  sort: "default",
+  isGlutenFree: false,
+  isTanninFree: false,
+  isOrganic: false,
+  isKosher: false,
+};
 
 $(document).ready(function () {
   renderApp();
@@ -132,76 +141,6 @@ function filterByType(typeName) {
     );
   }
   showMenu(filteredProducts);
-}
-
-// return the list of products filtered based on gluten and tannin
-function filterByAllergic() {
-  let filteredProducts = DB.products; // Initially, no filtering is applied
-
-  // Check the checkbox for each condition and apply the appropriate filter if it is ticked
-  if (document.getElementById("gluten").checked) {
-    filteredProducts = filteredProducts.filter(product => product.gluten == 0);
-  }
-
-  if (document.getElementById("tannin").checked) {
-    filteredProducts = filteredProducts.filter(product => product.tannin == 0);
-  }
-
-  if (document.getElementById("organic").checked) {
-    filteredProducts = filteredProducts.filter(product => product.organic == 1);
-  }
-
-  if (document.getElementById("kosher").checked) {
-    filteredProducts = filteredProducts.filter(product => product.kosher == 1);
-  }
-
-
-  showMenu(filteredProducts);
-}
-
-// return the list of products filtered based on search
-function filterBySearch() {
-  const searchInput = document.getElementById("search-bar").value.toLowerCase();
-
-  const filteredProducts = DB.products.filter((product) => {
-    return product.name.toLocaleLowerCase().includes(searchInput);
-  });
-
-  showMenu(filteredProducts);
-}
-
-// return the list of products filtered based on different sort
-function filterBySort() {
-  const sortBy = document.getElementById("sortby").value;
-  let sortedProducts;
-
-  switch (sortBy) {
-    case "price_low_high":
-      sortedProducts = DB.products.sort((a, b) => a.price - b.price);
-      break;
-    case "price_high_low":
-      sortedProducts = DB.products.sort((a, b) => b.price - a.price);
-      break;
-    case "alcohol_low_high":
-      sortedProducts = DB.products.sort((a, b) => {
-        const alcoholA = parseFloat(a.alcoholstrength.replace("%", ""));
-        const alcoholB = parseFloat(b.alcoholstrength.replace("%", ""));
-        return alcoholA - alcoholB;
-      });
-      break;
-    case "alcohol_high_low":
-      sortedProducts = DB.products.sort((a, b) => {
-        const alcoholA = parseFloat(a.alcoholstrength.replace("%", ""));
-        const alcoholB = parseFloat(b.alcoholstrength.replace("%", ""));
-        return alcoholB - alcoholA;
-      });
-      break;
-
-    default:
-      sortedProducts = DB.products;
-      break;
-  }
-  showMenu(sortedProducts);
 }
 
 function fetchMenu() {
@@ -545,6 +484,76 @@ function updateWelcomeText() {
       <p> Enjoy our wide range of drinks and have a great time!</p>`);
 }
 
+function applyFilters() {
+  let filteredProducts = DB.products;
+
+  // Filter by type
+  if (currentFilters.type !== "All") {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.type === currentFilters.type
+    );
+  }
+
+  // Filter by search terms
+  if (currentFilters.search) {
+    filteredProducts = filteredProducts.filter((product) =>
+      product.name.toLowerCase().includes(currentFilters.search.toLowerCase())
+    );
+  }
+
+  // Applied Allergen Filtration
+  if (currentFilters.isGlutenFree) {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.gluten == 0
+    );
+  }
+  if (currentFilters.isTanninFree) {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.tannin == 0
+    );
+  }
+  if (currentFilters.isOrganic) {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.organic == 1
+    );
+  }
+  if (currentFilters.isKosher) {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.kosher == 1
+    );
+  }
+
+  // Applying Sorting Logic
+  switch (currentFilters.sort) {
+    case "price_low_high":
+      filteredProducts.sort((a, b) => a.price - b.price);
+      break;
+    case "price_high_low":
+      filteredProducts.sort((a, b) => b.price - a.price);
+      break;
+    case "alcohol_low_high":
+      filteredProducts.sort((a, b) => {
+        const alcoholA = parseFloat(a.alcoholstrength) || 0;
+        const alcoholB = parseFloat(b.alcoholstrength) || 0;
+        return alcoholA - alcoholB;
+      });
+      break;
+    case "alcohol_high_low":
+      filteredProducts.sort((a, b) => {
+        const alcoholA = parseFloat(a.alcoholstrength) || 0;
+        const alcoholB = parseFloat(b.alcoholstrength) || 0;
+        return alcoholB - alcoholA;
+      });
+      break;
+    default:
+      // Not sorted by default
+      break;
+  }
+
+  // Show filtered and sorted product list
+  showMenu(filteredProducts);
+}
+
 function callEventListeners() {
   $("#enter-pub").on("click", function () {
     $("#landing").hide();
@@ -558,31 +567,40 @@ function callEventListeners() {
     logout();
   });
 
+  $(".filter-buttons .secondary-btn").on("click", function () {
+    currentFilters.type = $(this).text();
+    applyFilters();
+  });
+
+  // Event listener for checkbox changes
   $("#gluten").on("change", function () {
-    filterByAllergic();
+    currentFilters.isGlutenFree = this.checked;
+    applyFilters();
   });
 
-  // Event listener for tannin checkbox changes
   $("#tannin").on("change", function () {
-    filterByAllergic();
+    currentFilters.isTanninFree = this.checked;
+    applyFilters();
   });
 
-  // Event listener for organic checkbox changes
   $("#organic").on("change", function () {
-    filterByAllergic();
+    currentFilters.isOrganic = this.checked;
+    applyFilters();
   });
 
-  // Event listener for kosher checkbox changes
   $("#kosher").on("change", function () {
-    filterByAllergic();
+    currentFilters.isKosher = this.checked;
+    applyFilters();
   });
 
   $("#search-bar").on("input", function () {
-    filterBySearch();
+    currentFilters.search = $(this).val();
+    applyFilters();
   });
 
   $("#sortby").on("change", function () {
-    filterBySort();
+    currentFilters.sort = $(this).val();
+    applyFilters();
   });
 
   $("#cart-container").on("click", ".remove-icon", function () {
