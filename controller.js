@@ -75,42 +75,42 @@ function showMenu(filteredProducts) {
     // Create the product item element
     const productItem = $(`
     <div class="product-item" draggable="true" id="${product.nr}">
-    <img src="assets/images/game-icons--${product.type === "Wine"
-        ? "beer-bottle"
-        : product.type === "Beer"
-          ? "wine-glass"
-          : "martini"
-      }.svg" alt="${product.name}" class="product-image">
-<div class="product-info">
-        <h3 class="product-name">${product.name}</h3>
-        <p class="product-price">${product.price} kr</p>
-        ${product.alcoholstrength
-        ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
-        : ""
-      }
-        ${product.category
-        ? `<p class="product-category">${product.category}</p>`
-        : ""
-      }
-        ${product.packaging
-        ? `<p class="packaging">${product.packaging}</p>`
-        : ""
-      }
-        ${product.productionyear
-        ? `<p class="product-year">${product.productionyear}</p>`
-        : ""
-      }
-        ${product.producer
-        ? `<p class="product-producer">${product.producer}</p>`
-        : ""
-      }
-        ${product.countryoforiginlandname
-        ? `<p>${product.countryoforiginlandname}</p>`
-        : ""
-      }
+        <div class="flex-container">
+            <img src="assets/images/game-icons--${product.type === "Wine"
+                ? "beer-bottle"
+                : product.type === "Beer"
+                  ? "wine-glass"
+                  : "martini"
+              }.svg" alt="${product.name}" class="product-image">
+            <div class="product-info">
+                <h3 class="product-name">${product.name}</h3>
+                <p class="product-price">${product.price} kr</p>
+            </div>
+        </div>
+        <div class="divider"></div> 
+        <div class="bottom-info">
+            ${product.alcoholstrength
+            ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
+            : ""}
+            ${product.category
+            ? `<p class="product-category">${product.category}</p>`
+            : ""}
+            ${product.packaging
+            ? `<p class="packaging">${product.packaging}</p>`
+            : ""}
+            ${product.productionyear
+            ? `<p class="product-year">${product.productionyear}</p>`
+            : ""}
+            ${product.producer
+            ? `<p class="product-producer">${product.producer}</p>`
+            : ""}
+            ${product.countryoforiginlandname
+            ? `<p>${product.countryoforiginlandname}</p>`
+            : ""}
         </div>
     </div>
 `);
+
 
     // Bind the click event to this specific product item
     productItem.on("click", () => {
