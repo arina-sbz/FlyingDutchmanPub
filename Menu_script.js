@@ -310,29 +310,29 @@ document.getElementById("orderButton").addEventListener("click", placeOrder);
 // }
 
 // Function to show table number selection
-// function showTableNumberSelection() {
-//   let tableNumberSelect = document.getElementById("tableNumber");
-//   if (!tableNumberSelect) {
-//     tableNumberSelect = document.createElement("select");
-//     tableNumberSelect.id = "tableNumber";
-//     for (let i = 1; i <= 20; i++) {
-//       tableNumberSelect.options.add(new Option(i, i));
-//     }
-//     const deliveryOption = document.getElementById("deliveryOption");
-//     deliveryOption.after(tableNumberSelect);
-//   }
-// }
+function showTableNumberSelection() {
+  let tableNumberSelect = document.getElementById("tableNumber");
+  if (!tableNumberSelect) {
+    tableNumberSelect = document.createElement("select");
+    tableNumberSelect.id = "tableNumber";
+    for (let i = 1; i <= 20; i++) {
+      tableNumberSelect.options.add(new Option(i, i));
+    }
+    const deliveryOption = document.getElementById("deliveryOption");
+    deliveryOption.after(tableNumberSelect);
+  }
+}
 
 // Function to hide table number selection
-// function hideTableNumberSelection() {
-//   const tableNumberSelect = document.getElementById("tableNumber");
-//   if (tableNumberSelect) {
-//     tableNumberSelect.remove();
-//   }
-// }
+function hideTableNumberSelection() {
+  const tableNumberSelect = document.getElementById("tableNumber");
+  if (tableNumberSelect) {
+    tableNumberSelect.remove();
+  }
+}
 
 // Function to generate a random 4-digit code for takeaway orders
-// function generateTakeawayCode() {
-//   const code = Math.floor(1000 + Math.random() * 9000); // Generates a number between 1000 and 9999
-//   alert(`Order paied successfully. Self Service Code: ${code}`);
-// }
+function generateTakeawayCode() {
+  const code = Math.floor(1000 + Math.random() * 9000); // Generates a number between 1000 and 9999
+  alert(`Order paied successfully. Self Service Code: ${code}`);
+}
