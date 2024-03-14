@@ -53,6 +53,16 @@
   align-items: center;
 }
 
+.landing-btns{
+  display: flex;
+}
+
+.landing-btn{
+  width: 15rem;
+  height: 5rem;
+  margin: 5px;
+}
+
 /* primary button */
 .primary-btn {
   background-color: var(--white-color);
@@ -241,9 +251,6 @@
 
 .search-bar {
   position: relative;
-}
-
-#search-bar {
   width: 26rem;
   padding-right: 40px;
   padding: 12px;
@@ -262,7 +269,7 @@
   background: none;
 }
 
-.sort-dropdown #sortby {
+.sort-dropdown .sortby {
   margin-top: 5px;
   width: 18rem;
   padding: 12px;
@@ -279,7 +286,7 @@
   display: flex;
 }
 
-#products {
+.products {
   /* flex: 0 0 70%; */
   max-width: 70%;
   padding: 10px;
@@ -289,7 +296,7 @@
 }
 .product-item {
   width: calc(33.333% - 10px);
-  height: 200px !important;
+  height: 15rem !important;
   background-color: var(--primary-color);
   margin: 0 5px 5px 0;
   color: var(--white-color);
@@ -349,8 +356,27 @@
   border-right: 1px solid #ccc;
 }
 
+.product-actions{
+  display: flex;
+  margin-top: 5px;
+  justify-content: space-between;
+}
 
-#cart-container {
+.low-stock{
+  color: rgb(237, 28, 36);
+}
+
+.product-actions button {
+  background: none; /* Remove button background */
+  border: none; /* Remove button border */
+  color: var(--warning-color); /* Set the text color (assuming you want to keep the white color from your design) */
+  padding: 0; /* Remove padding */
+  margin: 0 5px; /* Optional: add some space between the buttons */
+  cursor: pointer; /* Change mouse cursor to pointer to indicate the element is clickable */
+  text-decoration: underline;
+}
+
+.cart-container {
   display: flex;
   flex-direction: column;
   background-color: var(--gray-color);
@@ -363,21 +389,21 @@
   /* Ensure the container takes full height */
 }
 
-#cart-container .order-title {
+.cart-container .order-title {
   text-align: center;
   font-size: 24px;
   font-weight: bold;
   color: var(--primary-color);
 }
 
-#cart-container .empty-text {
+.cart-container .empty-text {
   text-align: center;
   font-size: 20px;
   font-weight: 500;
   color: var(--primary-color);
 }
 
-#cart-container .cart-item {
+.cart-container .cart-item {
   color: var(--primary-color);
   margin-left: 10px;
   padding: 4px;
@@ -386,11 +412,11 @@
   align-items: center;
 }
 
-#cart-container .cart-item .item-price {
+.cart-container .cart-item .item-price {
   margin-left: auto;
 }
 
-#cart-container .cart-item .remove-icon {
+.cart-container .cart-item .remove-icon {
   margin-left: 5px;
   font-size: 32px;
   color: var(--red-color);
@@ -512,7 +538,7 @@ body {
     padding: 20px;
 }
 
-#products {
+.products {
     background-color: #2D3250;
     display: flex;
     flex-wrap: wrap;
@@ -525,7 +551,7 @@ body {
     margin-bottom: 20px;
 }
 
-#products div {
+.products div {
     cursor: pointer;
     background-color: #424769;
     border: 1px solid #F6B17A;
@@ -538,7 +564,7 @@ body {
     max-height: 50px;
 }
 
-#products div:hover {
+.products div:hover {
     background-color: #F6B17A;
     color: white;
 }

@@ -18,7 +18,7 @@ export var DB = {
     },
     {
       user_id: "1",
-      credentials: "0",
+      credentials: "1",
       password: "123456",
       username: "arina",
       first_name: "Arina",
@@ -131,6 +131,7 @@ export var DB = {
       type: "Beer",
       gluten: "1",
       tannin: "1",
+      stock: 4,
     },
     {
       nr: "1101003",
@@ -160,6 +161,7 @@ export var DB = {
       type: "Beer",
       gluten: "1",
       tannin: "1",
+      stock: 30,
     },
     {
       nr: "1101203",
@@ -189,6 +191,7 @@ export var DB = {
       type: "Beer",
       gluten: "1",
       tannin: "1",
+      stock: 10,
     },
     {
       nr: "1104303",
@@ -218,6 +221,7 @@ export var DB = {
       type: "Beer",
       gluten: "1",
       tannin: "0",
+      stock: 3,
     },
     {
       nr: "1104803",
@@ -247,6 +251,7 @@ export var DB = {
       type: "Beer",
       gluten: "0",
       tannin: "1",
+      stock: 4,
     },
     {
       nr: "1104903",
@@ -276,6 +281,7 @@ export var DB = {
       type: "Beer",
       gluten: "1",
       tannin: "1",
+      stock: 10,
     },
     {
       nr: "1105603",
@@ -305,6 +311,7 @@ export var DB = {
       type: "Beer",
       gluten: "0",
       tannin: "0",
+      stock:6,
     },
     {
       nr: "1105901",
@@ -334,6 +341,7 @@ export var DB = {
       type: "Beer",
       gluten: "1",
       tannin: "1",
+      stock: 18,
     },
     {
       nr: "1106901",
@@ -363,6 +371,7 @@ export var DB = {
       type: "Beer",
       gluten: "1",
       tannin: "1",
+      stock: 10,
     },
     //Wine
     {
@@ -393,6 +402,7 @@ export var DB = {
       type: "Wine",
       gluten: "1",
       tannin: "1",
+      stock: 15,
     },
     {
       nr: "7416501",
@@ -422,6 +432,7 @@ export var DB = {
       type: "Wine",
       gluten: "1",
       tannin: "1",
+      stock: 20,
     },
     {
       nr: "1289008",
@@ -451,6 +462,7 @@ export var DB = {
       type: "Wine",
       gluten: "1",
       tannin: "1",
+      stock: 7,
     },
     {
       nr: "1279708",
@@ -480,6 +492,7 @@ export var DB = {
       type: "Wine",
       gluten: "1",
       tannin: "1",
+      stock: 20,
     },
     {
       nr: "7309701",
@@ -509,6 +522,7 @@ export var DB = {
       type: "Wine",
       gluten: "1",
       tannin: "1",
+      stock: 10,
     },
     {
       nr: "7368801",
@@ -538,6 +552,7 @@ export var DB = {
       type: "Wine",
       gluten: "0",
       tannin: "0",
+      stock: 30,
     },
     {
       nr: "8327101",
@@ -567,6 +582,7 @@ export var DB = {
       type: "Wine",
       gluten: "1",
       tannin: "1",
+      stock: 25,
     },
     {
       nr: "7360501",
@@ -596,6 +612,7 @@ export var DB = {
       type: "Wine",
       gluten: "1",
       tannin: "0",
+      stock: 16,
     },
     {
       nr: "7987409",
@@ -625,6 +642,7 @@ export var DB = {
       type: "Wine",
       gluten: "0",
       tannin: "1",
+      stock: 12,
     },
     //Spirit
     {
@@ -655,6 +673,7 @@ export var DB = {
       type: "Spirit",
       gluten: "1",
       tannin: "1",
+      stock: 18,
     },
     {
       nr: "1005001",
@@ -684,6 +703,7 @@ export var DB = {
       type: "Spirit",
       gluten: "1",
       tannin: "1",
+      stock: 23,
     },
     {
       nr: "1005401",
@@ -713,6 +733,7 @@ export var DB = {
       type: "Spirit",
       gluten: "1",
       tannin: "1",
+      stock: 5,
     },
     {
       nr: "1011701",
@@ -742,6 +763,7 @@ export var DB = {
       type: "Spirit",
       gluten: "0",
       tannin: "1",
+      stock: 15,
     },
     {
       nr: "1012601",
@@ -771,6 +793,7 @@ export var DB = {
       type: "Spirit",
       gluten: "1",
       tannin: "0",
+      stock: 18,
     },
     {
       nr: "1019202",
@@ -800,6 +823,7 @@ export var DB = {
       type: "Spirit",
       gluten: "0",
       tannin: "0",
+      stock: 12,
     },
     {
       nr: "1019301",
@@ -829,6 +853,7 @@ export var DB = {
       type: "Spirit",
       gluten: "1",
       tannin: "1",
+      stock: 19,
     },
     {
       nr: "1019701",
@@ -858,6 +883,7 @@ export var DB = {
       type: "Spirit",
       gluten: "1",
       tannin: "1",
+      stock: 12,
     },
     {
       nr: "1023901",
@@ -887,16 +913,44 @@ export var DB = {
       type: "Spirit",
       gluten: "1",
       tannin: "1",
+      stock: 2,
     },
   ],
   orders: [
-    // {
-    //   order_nr: "0",
-    //   user_id: "0",
-    //   table_number: "0",
-    //   items: [],
-    //   amount: "0",
-    //   pickup: "bar",
-    // },
+    {
+      order_nr: "001",
+      username: "Mike Miller",
+      table_number: "10",
+      type:"table",
+      status:"fullfilled",
+      items: [
+        {
+          nr:'1004703',
+          name: 'Nils Oscar',
+          quantity: 1,
+        }
+      ],
+      amount: "43.70",
+    },
+    {
+      order_nr: "002",
+      username: "Emma Smith",
+      table_number: "",
+      type:"bar",
+      status:"fullfilled",
+      items: [
+        {
+          nr:'1004703',
+          name: 'Nils Oscar',
+          quantity: 1,
+        },
+        {
+          nr:'1101003',
+          name: 'Corsendonk Christmas Ale',
+          quantity: 2,
+        }
+      ],
+      amount: "85.50",
+    },
   ],
 };

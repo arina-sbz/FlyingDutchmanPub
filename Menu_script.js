@@ -7,7 +7,7 @@ let cart = [];
 
 // Function to filter and display products by category
 function filterCategory(category) {
-  const productsDiv = document.getElementById("products");
+  const productsDiv = document.querySelector("products");
   productsDiv.innerHTML = ""; // Clear the products display
 
   // Filter products based on the selected category
@@ -21,7 +21,7 @@ function filterCategory(category) {
 
 // Function to display all products when the page is loaded
 function displayAllProducts() {
-  const productsDiv = document.getElementById("products");
+  const productsDiv = document.querySelector("products");
   productsDiv.innerHTML = ""; // Clear the products display
 
   // Sort products by name alphabetically
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", displayAllProducts());
 
 // Function to choose gluten free products
 function filterGlutenFree() {
-  const productsDiv = document.getElementById("products");
+  const productsDiv = document.querySelector("products");
   productsDiv.innerHTML = ""; // Clear the products display
 
   const isGlutenFreeChecked = document.getElementById("gluten").checked;
@@ -56,7 +56,7 @@ document.getElementById("gluten").addEventListener("change", filterGlutenFree);
 
 // Function to choose tannin free products
 function filterTanninFree() {
-  const productsDiv = document.getElementById("products");
+  const productsDiv = document.querySelector("products");
   productsDiv.innerHTML = ""; // Clear the products display
 
   const isTanninFreeChecked = document.getElementById("tannin").checked;
@@ -77,7 +77,7 @@ document.getElementById("tannin").addEventListener("change", filterTanninFree);
 // Function to search for products
 function searchProducts() {
   const searchInput = document.getElementById("search-bar").value.toLowerCase();
-  const productsDiv = document.getElementById("products");
+  const productsDiv = document.querySelector("products");
   productsDiv.innerHTML = "";
 
   const filteredProducts = DB.products.filter((product) => {
@@ -122,7 +122,7 @@ function sortedProducts() {
 document.getElementById("sortby").addEventListener("change", sortedProducts);
 
 function displayFilteredProducts(products) {
-  const productsDiv = document.getElementById("products");
+  const productsDiv = document.querySelector("products");
   productsDiv.innerHTML = ""; // 清除之前的产品显示
 
   products.forEach((product) => {

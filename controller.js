@@ -3,7 +3,9 @@ import { DB } from "./model.js";
 // global variables
 let cart = [];
 let role = "";
+let currentSystem = "";
 let userFullName = "";
+let orders = [];
 let currentFilters = {
   type: "All",
   search: "",
@@ -15,18 +17,16 @@ let currentFilters = {
 };
 
 $(document).ready(function () {
-  renderApp();
   showLandingPage();
   callEventListeners();
   checkAuthentication();
   updateWelcomeText();
+  setOrdersInStorage();
+  $(document).on("change", "input[name='service']", function () {
+    toggleTableNumberInput();
+  });
+  updateServiceOptions();
 });
-
-// function to render the app at the beggining
-function renderApp() {
-  fetchMenu();
-  fetchCart();
-}
 
 // ******Functions******
 // landing page
@@ -39,8 +39,11 @@ function showLandingPage() {
       <p class="welcome">Welcome to the </p>
       <p class="pub-name">Flying Dutchman</p>
       <img src="assets/images/logo.png" alt="pub" class="pub-image">
-      <button type="button" class="primary-btn" id="enter-pub">MENU</button>
-    </div>
+      <div class="landing-btns">
+      <button type="button" class="primary-btn landing-btn" id="enter-pub">Customer</button>
+      <button type="button" class="primary-btn landing-btn" id="choose-staff">Staff</button>
+      </div>
+      </div>
   </div>
     `
   );
@@ -64,8 +67,8 @@ function returnFilterButtons() {
 
 // show the list of filtered products
 function showMenu(filteredProducts) {
-  const productsDiv = document.getElementById("products");
-  productsDiv.innerHTML = ""; // Clear the products display
+  const productsDiv = $(".products");
+  productsDiv.empty();
   if (filteredProducts.length === 0) {
     productsDiv.innerHTML = `<p class="no-products">No products found</p>`;
   }
@@ -76,12 +79,13 @@ function showMenu(filteredProducts) {
     const productItem = $(`
     <div class="product-item" draggable="true" id="${product.nr}">
         <div class="flex-container">
-            <img src="assets/images/game-icons--${product.type === "Wine"
-                ? "beer-bottle"
+            <img src="assets/images/game-icons--${
+              product.type === "Wine"
+                ? "wine-glass"
                 : product.type === "Beer"
-                  ? "wine-glass"
-                  : "martini"
-              }.svg" alt="${product.name}" class="product-image">
+                ? "beer-bottle"
+                : "martini"
+            }.svg" alt="${product.name}" class="product-image">
             <div class="product-info">
                 <h3 class="product-name">${product.name}</h3>
                 <p class="product-price">${product.price} kr</p>
@@ -89,28 +93,55 @@ function showMenu(filteredProducts) {
         </div>
         <div class="divider"></div> 
         <div class="bottom-info">
-            ${product.alcoholstrength
-            ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
-            : ""}
-            ${product.category
-            ? `<p class="product-category">${product.category}</p>`
-            : ""}
-            ${product.packaging
-            ? `<p class="packaging">${product.packaging}</p>`
-            : ""}
-            ${product.productionyear
-            ? `<p class="product-year">${product.productionyear}</p>`
-            : ""}
-            ${product.producer
-            ? `<p class="product-producer">${product.producer}</p>`
-            : ""}
-            ${product.countryoforiginlandname
-            ? `<p>${product.countryoforiginlandname}</p>`
-            : ""}
+            ${
+              product.alcoholstrength
+                ? `<p class="product-alcohol">${product.alcoholstrength}</p>`
+                : ""
+            }
+            ${
+              product.category
+                ? `<p class="product-category">${product.category}</p>`
+                : ""
+            }
+            ${
+              product.packaging
+                ? `<p class="packaging">${product.packaging}</p>`
+                : ""
+            }
+            ${
+              product.productionyear
+                ? `<p class="product-year">${product.productionyear}</p>`
+                : ""
+            }
+            ${
+              product.producer
+                ? `<p class="product-producer">${product.producer}</p>`
+                : ""
+            }
+            ${
+              product.countryoforiginlandname
+                ? `<p>${product.countryoforiginlandname}</p>`
+                : ""
+            }
         </div>
+
+        ${
+          currentSystem == "staff"
+            ? `
+            <div class="divider"></div>
+            <div class="product-actions">
+                <span class="${product.stock > 5 ? "" : "low-stock"}">Stock: ${
+                product.stock ? `<span>${product.stock}</span>` : ""
+              }</span>
+                <button type="button">Edit</button>
+                <button type="button">Remove</button>
+            </div>
+        `
+            : ``
+        }
+
     </div>
 `);
-
 
     // Bind the click event to this specific product item
     productItem.on("click", () => {
@@ -129,7 +160,7 @@ function showMenu(filteredProducts) {
     });
 
     // Append the product item to the products container
-    $("#products").append(productItem);
+    $(".products").append(productItem);
   });
 }
 
@@ -147,10 +178,9 @@ function filterByType(typeName) {
   showMenu(filteredProducts);
 }
 
-function fetchMenu() {
+function showFilters() {
   returnFilterButtons();
   filterByType("All");
-  $("#menu-container").show();
 }
 
 // Function to add a product to the shopping cart
@@ -169,7 +199,7 @@ function addToCart(nr, name, price) {
 
 // Function to update the shopping cart UI
 function updateCartUI() {
-  const cartContainer = $("#cart-container");
+  const cartContainer = $(".cart-container");
   cartContainer.empty();
   cartContainer.append(`<div class="order-title">Order Summary</div>
   <hr class="hr-style"> </hr>`);
@@ -196,41 +226,32 @@ function updateCartUI() {
     <div class="bottom-section">
     <div class="service-options">
       <label>
-        <input type="radio" name="service" value="table" checked> Table Service
+      <input type="radio" name="service" value="table"> Table Service
       </label>
       <label>
-        <input type="radio" name="service" value="bar"> Bar Pick-Up
+      <input type="radio" name="service" value="bar"> Bar Pick-Up
       </label>
-      ${role == 3
-        ? `
-            <label>
-              <input type="radio" name="service" value="fridge"> Fridge Self-Service
-              <p class="combination">Combination: 35-16-08</p>
-            </label>
-      `
-        : ""
-      }
     </div>
-    <div class="table-number">
-    <label>
-    <label>Table Number:</label>
-    <input type="text" id="table-number">  </label>
-   
+    <div class="table-number" style="display: none;">
+    <label for="table-number">Table Number:</label>
+    <input type="text" id="table-number" name="table-number">
     </div>
+
     <div class="total-section">
       <span>TOTAL</span>
       <span class="total-price">${updateTotalPriceDisplay()}</span>
     </div>
     
     <div class="cart-buttons">
-    ${role == 3
+    ${
+      localStorage.getItem("role") == 3
         ? '<button type="button" id="submit-vip" class="secondary-btn">Place Order</button>'
         : '<button type="button" id="place-order" class="secondary-btn">Place Order</button>'
-      }
+    }
     <button type="button" id="clear-cart" class="red-btn">Clear Cart</button>
     </div>
     </div>
-  `);
+    `);
 
     $("#clear-cart").on("click", function () {
       clearCart();
@@ -247,8 +268,17 @@ function updateCartUI() {
     // manageAmountDue();
     // updateAmountDue();
     // Update the total price in the UI
+    updateServiceOptions();
     updateTotalPrice();
     updateTotalPriceDisplay();
+  }
+}
+
+function toggleTableNumberInput() {
+  if ($("input[name='service']:checked").val() === "table") {
+    $(".table-number").show();
+  } else {
+    $(".table-number").hide();
   }
 }
 
@@ -325,7 +355,7 @@ function getOrderNumber() {
   let orderNumber = localStorage.getItem("orderNumber");
 
   if (!orderNumber) {
-    orderNumber = "001";
+    orderNumber = "003";
   } else {
     let nextOrderNumber = parseInt(orderNumber) + 1;
     orderNumber = nextOrderNumber.toString().padStart(3, "0");
@@ -340,23 +370,37 @@ function getOrderNumber() {
 function placeOrder() {
   if (cart.length > 0) {
     const orderNumber = getOrderNumber();
-    DB.orders.push({
+    orders.push({
       order_nr: orderNumber,
-      user_id: localStorage.getItem("userId")
-        ? localStorage.getItem("userId")
-        : "",
-      table_number: $("#table-number").val(),
+      username:
+        localStorage.getItem("role") == "3" &&
+        localStorage.getItem("userFullName")
+          ? localStorage.getItem("userFullName")
+          : "",
+      table_number: $("#table-number").val() ? $("#table-number").val() : "",
       items: cart,
       amount: updateTotalPrice(),
-      pickup: $("input[name='service']:checked").val(),
+      type: $("input[name='service']:checked").val(),
+      status: "pending",
     });
-    alert(`Order placed successfully. Your order number is ${orderNumber}`);
+    localStorage.setItem("orders", JSON.stringify(orders));
+    const randomNumber = Math.floor(Math.random() * 1000);
+    $("input[name='service']:checked").val() === "fridge"
+      ? alert(
+          `Order placed successfully. Your order number is ${orderNumber}. The code is ${randomNumber}`
+        )
+      : alert(`Order placed successfully. Your order number is ${orderNumber}`);
     clearCart();
   } else {
     alert(
       "Cart is empty. Please add items to your cart before placing an order."
     );
   }
+}
+
+function setOrdersInStorage() {
+  orders = DB.orders;
+  localStorage.setItem("orders", JSON.stringify(orders));
 }
 
 function openPayment() {
@@ -384,6 +428,7 @@ function openPayment() {
     $("#payment-modal").hide();
   });
 }
+
 // Function to clear the shopping cart
 function clearCart() {
   cart = [];
@@ -429,22 +474,25 @@ function login() {
       "userFullName",
       user.first_name + " " + user.last_name
     );
-    $(".login-btn").hide();
-    $(".logout-btn").show();
-    updateWelcomeText();
+    if (currentSystem == "staff") {
+      showStaffMain();
+      updateWelcomeText();
+    } else {
+      $(".login-btn").hide();
+      $(".logout-btn").show();
+      updateWelcomeText();
+      updateServiceOptions();
+      updateCartUI();
+    }
   } else {
     alert("Invalid username or password. Please try again.");
   }
 }
 
 function logout() {
-  localStorage.removeItem("username");
-  localStorage.removeItem("userFullName");
-  localStorage.removeItem("role");
-  localStorage.removeItem("userId");
-  $(".login-btn").show();
-  $(".logout-btn").hide();
-  updateWelcomeText();
+  localStorage.clear();
+  clearCart();
+  $("#landing").show();
 }
 
 function validateUser(username, password) {
@@ -461,7 +509,7 @@ function validateUser(username, password) {
 }
 
 function checkAuthentication() {
-  if (localStorage.getItem("username")) {
+  if (localStorage.getItem("role") == "3") {
     role = localStorage.getItem("role");
     // $("#welcome-container").append(`
     //     <p>Welcome to Flying Dutchman Pub ${
@@ -470,6 +518,7 @@ function checkAuthentication() {
     //         : ""
     //     }!</p>
     //     <p> Enjoy our wide range of drinks and have a great time!</p>`);
+    updateServiceOptions();
     $(".login-btn").hide();
     $(".logout-btn").show();
   } else {
@@ -477,15 +526,44 @@ function checkAuthentication() {
     $(".logout-btn").hide();
   }
 }
+function updateServiceOptions() {
+  const role = localStorage.getItem("role");
+
+  if (role === "3") {
+    $(".service-options").append(`
+      <label>
+        <input type="radio" name="service" value="fridge"> Fridge Self-Service
+      </label>
+    `);
+  } else {
+    $('input[name="service"][value="fridge"]').closest("label").remove();
+  }
+}
 
 function updateWelcomeText() {
+  let position = "";
+  localStorage.getItem("role") == "0"
+    ? (position = "Manager")
+    : localStorage.getItem("role") == "1"
+    ? (position = "Bartender")
+    : (position = "Waiter");
   $("#welcome-container").empty();
-  $("#welcome-container").append(`
-      <p>Welcome to Flying Dutchman Pub ${localStorage.getItem("userFullName")
-      ? localStorage.getItem("userFullName")
-      : ""
-    }!</p>
-      <p> Enjoy our wide range of drinks and have a great time!</p>`);
+  if (localStorage.getItem("currentSystem") == "customer") {
+    $("#welcome-container").append(
+      `<p>Welcome to Flying Dutchman Pub ${
+        localStorage.getItem("role") == "3"
+          ? localStorage.getItem("userFullName")
+          : "" || ""
+      }!</p>` +
+        (localStorage.getItem("currentSystem") == "customer"
+          ? "<p> Enjoy our wide range of drinks and have a great time!</p>"
+          : "")
+    );
+  } else {
+    $("#welcome-container").append(
+      `<p>${localStorage.getItem("userFullName")} - ${position}</p>`
+    );
+  }
 }
 
 function applyFilters() {
@@ -558,13 +636,56 @@ function applyFilters() {
   showMenu(filteredProducts);
 }
 
+//******** STAFF ********
+function staffIsChosen() {
+  currentSystem = "staff";
+  localStorage.setItem("currentSystem", "staff");
+  $("#landing").hide();
+  $("#menu-container").hide();
+  $(".login-btn").hide();
+  $(".logout-btn").hide();
+  $("#welcome-container").hide();
+  $("#staff-container").hide();
+  $("#filter-section").hide();
+  $("#app").show();
+  if (localStorage.getItem("role") && localStorage.getItem("role") != "3") {
+    showStaffMain();
+  } else {
+    openLogin();
+  }
+}
+
+function showStaffMain() {
+  showFilters();
+  $("#staff-container").show();
+  $("#filter-section").show();
+  $("#welcome-container").show();
+  $(".logout-btn").show();
+  // applyFilters();
+}
+
+// **********************
+
 function callEventListeners() {
   $("#enter-pub").on("click", function () {
+    currentSystem = "customer";
+    localStorage.setItem("currentSystem", "customer");
     $("#landing").hide();
+    $("#staff-container").hide();
     $("#app").show();
+    showFilters();
+    updateWelcomeText();
+    fetchCart();
+    updateServiceOptions();
+    $("#menu-container").show();
   });
+
   $(".login-btn").on("click", function () {
     openLogin();
+  });
+
+  $("#choose-staff").on("click", function () {
+    staffIsChosen();
   });
 
   $(".logout-btn").on("click", function () {
@@ -577,48 +698,48 @@ function callEventListeners() {
   });
 
   // Event listener for checkbox changes
-  $("#gluten").on("change", function () {
+  $(".gluten").on("change", function () {
     currentFilters.isGlutenFree = this.checked;
     applyFilters();
   });
 
-  $("#tannin").on("change", function () {
+  $(".tannin").on("change", function () {
     currentFilters.isTanninFree = this.checked;
     applyFilters();
   });
 
-  $("#organic").on("change", function () {
+  $(".organic").on("change", function () {
     currentFilters.isOrganic = this.checked;
     applyFilters();
   });
 
-  $("#kosher").on("change", function () {
+  $(".kosher").on("change", function () {
     currentFilters.isKosher = this.checked;
     applyFilters();
   });
 
-  $("#search-bar").on("input", function () {
+  $(".search-bar").on("input", function () {
     currentFilters.search = $(this).val();
     applyFilters();
   });
 
-  $("#sortby").on("change", function () {
+  $(".sortby").on("change", function () {
     currentFilters.sort = $(this).val();
     applyFilters();
   });
 
-  $("#cart-container").on("click", ".remove-icon", function () {
+  $(".cart-container").on("click", ".remove-icon", function () {
     const itemNr = $(this).data("nr");
     removeFromCart(itemNr);
   });
 
   // For drag over
-  $("#cart-container").on("dragover", function (e) {
+  $(".cart-container").on("dragover", function (e) {
     e.preventDefault(); // This allows us to drop.
   });
 
   // For drop
-  $("#cart-container").on("drop", function (e) {
+  $(".cart-container").on("drop", function (e) {
     e.preventDefault(); // Prevent default action (open as link for some elements)
 
     // Get the id of the product being dragged
@@ -636,14 +757,19 @@ function callEventListeners() {
   });
 
   // For drag over from cart
-  $("#products").on("dragover", function (e) {
+  $(".products").on("dragover", function (e) {
     e.preventDefault(); // Allow drop
   });
 
-  $("#products").on("drop", function (e) {
+  $(".products").on("drop", function (e) {
     e.preventDefault();
     const itemNr = e.originalEvent.dataTransfer.getData("text");
     removeFromCart(itemNr);
+  });
+
+  // Event listener for when the service option changes
+  $("input[name='service']").change(function () {
+    toggleTableNumberInput();
   });
 
   // $(".split-amount").on("input", updateAmountDue);
