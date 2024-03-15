@@ -14,7 +14,6 @@ export var DB = {
       username: "shiqi",
       first_name: "Shiqi",
       last_name: "Shu",
-      role: "admin",
     },
     {
       user_id: "1",
@@ -23,7 +22,6 @@ export var DB = {
       username: "arina",
       first_name: "Arina",
       last_name: "Shahbazi",
-      role: "admin",
     },
     {
       user_id: "2",
@@ -32,7 +30,6 @@ export var DB = {
       username: "claudia",
       first_name: "Claudia",
       last_name: "VanValkenburg",
-      role: "admin",
     },
     {
       user_id: "3",
@@ -41,28 +38,24 @@ export var DB = {
       username: "ahmad",
       first_name: "Ahmad",
       last_name: "Jabri",
-      role: "admin",
     },
     {
       user_id: "4",
       credentials: "0",
       password: "123456",
       username: "manager",
-      role: "manager",
     },
     {
       user_id: "5",
       credentials: "0",
       password: "123456",
       username: "waiter",
-      role: "waiter",
     },
     {
       user_id: "6",
       credentials: "0",
       password: "123456",
       username: "bartender",
-      role: "bartender",
     },
     {
       user_id: "7",
@@ -71,7 +64,6 @@ export var DB = {
       username: "jorass",
       first_name: "Jory",
       last_name: "Assies",
-      role: "regular",
     },
     {
       user_id: "8",
@@ -80,7 +72,6 @@ export var DB = {
       username: "sulstr",
       first_name: "Sulayman",
       last_name: "Street",
-      role: "regular",
     },
     {
       user_id: "9",
@@ -89,7 +80,6 @@ export var DB = {
       username: "orapan",
       first_name: "Orabela",
       last_name: "Panders",
-      role: "regular",
     },
     {
       user_id: "10",
@@ -98,7 +88,6 @@ export var DB = {
       username: "kenolg",
       first_name: "Kenan",
       last_name: "Olguin",
-      role: "vip",
     },
   ],
   products: [
@@ -311,7 +300,7 @@ export var DB = {
       type: "Beer",
       gluten: "0",
       tannin: "0",
-      stock:6,
+      stock: 6,
     },
     {
       nr: "1105901",
@@ -921,14 +910,14 @@ export var DB = {
       order_nr: "001",
       username: "Mike Miller",
       table_number: "10",
-      type:"table",
-      status:"fullfilled",
+      type: "table",
+      status: "fullfilled",
       items: [
         {
-          nr:'1004703',
-          name: 'Nils Oscar',
+          nr: "1004703",
+          name: "Nils Oscar",
           quantity: 1,
-        }
+        },
       ],
       amount: "43.70",
     },
@@ -936,19 +925,19 @@ export var DB = {
       order_nr: "002",
       username: "Emma Smith",
       table_number: "",
-      type:"bar",
-      status:"fullfilled",
+      type: "bar",
+      status: "fullfilled",
       items: [
         {
-          nr:'1004703',
-          name: 'Nils Oscar',
+          nr: "1004703",
+          name: "Nils Oscar",
           quantity: 1,
         },
         {
-          nr:'1101003',
-          name: 'Corsendonk Christmas Ale',
+          nr: "1101003",
+          name: "Corsendonk Christmas Ale",
           quantity: 2,
-        }
+        },
       ],
       amount: "85.50",
     },

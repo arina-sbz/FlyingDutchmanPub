@@ -23,6 +23,7 @@
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script
       type="text/javascript"
       src="Dutchman files/jquery-3.3.1.min.js"
@@ -83,11 +84,11 @@
           </div>
         </div>
         <div class="filter-2">
-          <div class="search-bar">
+          <div class="search-bar-container">
             <input type="text" placeholder="Search..." class="search-bar" />
-            <button type="submit">
+            <!-- <button type="submit">
               <span class="material-icons">search</span>
-            </button>
+            </button> -->
           </div>
           <div class="sort-dropdown">
             <select name="sortby" class="sortby">
@@ -118,13 +119,15 @@
       <div id="staff-container">
         <div class="products-cart">
           <div class="products"></div>
-          <div class="tables-container"></div>
+          <div class="orders-container"></div>
+        </div>
+        <div class="order-modal-container" id="order-modal-container">
+          <div class="modal" id="order-modal"></div>
         </div>
       </div>
     </div>
 
     <script type="module" src="model.js"></script>
     <script type="module" src="controller.js"></script>
-    <!-- <script type="module" src="Menu_script.js"></script> -->
   </body>
 </html>

@@ -387,7 +387,7 @@ function placeOrder() {
     const randomNumber = Math.floor(Math.random() * 1000);
     $("input[name='service']:checked").val() === "fridge"
       ? alert(
-          `Order placed successfully. Your order number is ${orderNumber}. The code is ${randomNumber}`
+          `Order placed successfully. Your order number is ${orderNumber}. The fridge code is ${randomNumber}`
         )
       : alert(`Order placed successfully. Your order number is ${orderNumber}`);
     clearCart();
@@ -400,7 +400,9 @@ function placeOrder() {
 
 function setOrdersInStorage() {
   orders = DB.orders;
-  localStorage.setItem("orders", JSON.stringify(orders));
+  if (!localStorage.getItem("orders")) {
+    localStorage.setItem("orders", JSON.stringify(orders));
+  }
 }
 
 function openPayment() {
@@ -490,8 +492,12 @@ function login() {
 }
 
 function logout() {
-  localStorage.clear();
+  localStorage.removeItem("username");
+  localStorage.removeItem("role");
+  localStorage.removeItem("userId");
+  localStorage.removeItem("userFullName");
   clearCart();
+  window.location.href = "index.html";
   $("#landing").show();
 }
 
@@ -661,7 +667,137 @@ function showStaffMain() {
   $("#filter-section").show();
   $("#welcome-container").show();
   $(".logout-btn").show();
+  updateOrdersList();
   // applyFilters();
+}
+
+function updateOrdersList() {
+  const ordersList = JSON.parse(localStorage.getItem("orders") || []);
+  const ordersListContainer = $(".orders-container");
+  ordersListContainer.empty();
+  ordersListContainer.append(`<div class="order-title">Orders List</div>
+  <hr class="hr-style"> </hr>`);
+  if (ordersList.length == 0) {
+    ordersListContainer.append(
+      `<div class="empty-text">
+      <p>No current orders to handle. Enjoy the break, and stay ready for when the next order comes in!
+      </p>
+      </div>`
+    );
+  } else {
+    ordersList.sort((a, b) => {
+      if (a.status === "pending" && b.status !== "pending") {
+        return -1;
+      } else if (a.status !== "pending" && b.status === "pending") {
+        return 1;
+      } else if (a.status === "fulfilled" && b.status !== "fulfilled") {
+        return 1;
+      } else if (a.status !== "fulfilled" && b.status === "fulfilled") {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+
+    ordersList.forEach((item) => {
+      let statusClass;
+      let statusIcon;
+      switch (item.status) {
+        case "fullfilled":
+          statusClass = "order-fullfilled";
+          statusIcon = '<i class="fas fa-check-circle"></i>';
+          break;
+        default:
+          statusClass = "order-pending";
+          statusIcon = '<i class="fas fa-hourglass-half"></i>';
+      }
+
+      ordersListContainer.append(`
+      <div class="order-item ${statusClass}" data-order_nr="${item.order_nr}">
+      <h4 class="order-type">${
+        item.type === "table"
+          ? `Table ${item.table_number}`
+          : item.type === "bar"
+          ? "Bar"
+          : "Fridge"
+      }
+      <p class="order-number"> #${item.order_nr} </p>
+      </h4>
+      <span class="order-status ${statusClass}">${statusIcon} ${
+        item.status
+      } </span>
+      <span class="order-amount">${item.amount} SEK</span>
+      </div>
+      `);
+    });
+  }
+}
+
+function removeItemFromOrder(orderNr, itemNr) {
+  const ordersList = JSON.parse(localStorage.getItem("orders") || []);
+  const order = ordersList.find((order) => order.order_nr === orderNr);
+  if (order) {
+    const item = order.items.find((item) => item.nr == itemNr);
+    if (item) {
+      if (item.quantity > 1) {
+        item.quantity -= 1;
+        console.log('2');
+      } else {
+        const itemIndex = order.items.findIndex((item) => item.nr == itemNr);
+        if (itemIndex !== -1) {
+          order.items.splice(itemIndex, 1);
+        }
+      }
+      console.log('3');
+      const orderIndex = ordersList.findIndex((order) => order.order_nr === orderNr);
+      console.log('4');
+      if (orderIndex !== -1) {
+        ordersList[orderIndex] = order;
+        localStorage.setItem("orders", JSON.stringify(ordersList));
+        // Close the modal
+        console.log('5');
+       $("#order-modal").hide();
+        // Update the order list
+        updateOrdersList();
+      }
+    }
+  } 
+}
+
+function viewOrderItem(orderNr) {
+  const ordersList = JSON.parse(localStorage.getItem("orders") || []);
+  const order = ordersList.find((order) => order.order_nr === orderNr);
+  if (order) {
+    // Display the order details
+    $("#order-modal").empty(); // Clear the modal content first
+    $("#order-modal").append(
+      `<div class="modal-content"> 
+      <h2 class="order-modal-title">Order #${order.order_nr}
+      <span class="order-close-icon"><i class="fas fa-times"></i></span>
+      </h2>
+      
+      <hr class="hr-style"></hr>
+      <label for="items">Items:</label>
+      <div class="order-modal-list">
+        ${order.items
+          .map(
+            (item) => `<p> ${item.quantity}X ${item.name} 
+            ${order.status == 'pending' ? 
+          `<span class="order-modal-remove" data-order_nr="${order.order_nr}" data-item_nr="${item.nr}"><i class="fas fa-times"></i></span>` : ''}
+        </p> `
+          )
+          .join("")}
+      </div>
+      <hr class="hr-style"></hr>
+      <p class="modal-total">Total Amount:   <span>${
+        order.amount
+      } SEK</span></p>
+      </div>`
+    );
+    $("#order-modal").show();
+  } else {
+    alert("Order not found");
+  }
 }
 
 // **********************
@@ -771,6 +907,21 @@ function callEventListeners() {
   $("input[name='service']").change(function () {
     toggleTableNumberInput();
   });
+
+  $(document).on("click", ".order-item", function (event) {
+    const orderNr = $(this).data("order_nr");
+    viewOrderItem(orderNr);
+  });
+
+  $(document).on("click", ".order-close-icon", function (event) {
+    $("#order-modal").hide();
+  });
+
+  $(document).on('click', '.order-modal-remove', function() {
+    const orderNr = $(this).data('order_nr');
+    const itemNr = $(this).data('item_nr');
+    removeItemFromOrder(orderNr, itemNr); 
+});
 
   // $(".split-amount").on("input", updateAmountDue);
 }
