@@ -35,7 +35,7 @@ function showLandingPage() {
   $("#landing").append(
     `
     <div class="landing-container">
-    <div class="landing-text">
+    <div class="landing-elements">
       <p class="welcome">Welcome to the </p>
       <p class="pub-name">Flying Dutchman</p>
       <img src="assets/images/logo.png" alt="pub" class="pub-image">
@@ -790,7 +790,7 @@ function viewOrderItem(orderNr) {
     $("#order-modal").append(
       `<div class="modal-content"> 
       <h2 class="order-modal-title">Order #${order.order_nr}
-      <span class="order-close-icon"><i class="fas fa-times"></i></span>
+      <span class="close-icon"><i class="fas fa-times"></i></span>
       </h2>
       
       <hr class="hr-style"></hr>
@@ -933,7 +933,7 @@ function callEventListeners() {
     viewOrderItem(orderNr);
   });
 
-  $(document).on("click", ".order-close-icon", function (event) {
+  $(document).on("click", ".close-icon", function (event) {
     $("#order-modal").hide();
   });
 

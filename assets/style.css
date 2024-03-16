@@ -19,45 +19,7 @@
   font-family: "Fira Sans", sans-serif;
 }
 
-/* landing page */
-.landing-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: var(--primary-color);
-  color: var(--white-color);
-  text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.landing-container .welcome {
-  font-size: 60px;
-  font-weight: bold;
-}
-
-.landing-container .pub-name {
-  font-size: 72px;
-  font-weight: bold;
-}
-
-.landing-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.landing-btns {
-  display: flex;
-}
-
-.landing-btn {
-  width: 15rem;
-  height: 5rem;
-  margin: 5px;
-}
-
+/* ***********BUTTONS************* */
 /* primary button */
 .primary-btn {
   background-color: var(--white-color);
@@ -93,9 +55,56 @@
   border: none;
   cursor: pointer;
 }
+/* ******************************* */
+
+/* ***********LANDING************* */
+/* Landing page container style, centering elements and defining colors */
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* style for the welcome text */
+.landing-container .welcome {
+  font-size: 60px;
+  font-weight: bold;
+}
+
+/* style for the pub name in the landing page */
+.landing-container .pub-name {
+  font-size: 72px;
+  font-weight: bold;
+}
+
+/* style for the parent div of elements in the landing page */
+.landing-elements {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* style for buttons in the landing page */
+.landing-btns {
+  display: flex;
+}
+
+/* style for each button in the landing page  */
+.landing-btn {
+  width: 15rem;
+  height: 5rem;
+  margin: 5px;
+}
+/* ******************************* */
 
 /* ***********HEADER************* */
-/* header style */
+/* style for header container */
 #header {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -104,19 +113,20 @@
   color: var(--white-color);
 }
 
-/* logo container */
+/* style for logo container */
 #header .logo {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* style for logo image */
 #header .logo #pub-logo {
   width: 119px;
   height: 119px;
 }
 
-/* language icon container */
+/* style for language icon container */
 #header .lang {
   display: flex;
   text-align: center;
@@ -124,47 +134,39 @@
   justify-content: flex-end;
 }
 
+/* style for language icon */
 #header .lang .material-symbols-outlined {
   font-size: 53px;
   cursor: pointer;
   margin-right: 25px;
 }
 
-/* login button */
+/* style for login button */
 .login {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   margin-left: 25px;
 }
-
 /* ******************************* */
 
-/* ***********LOGIN************* */
-/* The Modal (background) */
+/* ***********MODAL************* */
+/* style for login modal, payment modal and order modal containers */
 #login-modal,
 #payment-modal, #order-modal {
   display: none;
-  /* Hidden by default */
   position: fixed;
-  /* Stay in place */
   z-index: 1;
-  /* Sit on top */
   left: 0;
   top: 0;
   width: 100%;
-  /* Full width */
   height: 100%;
-  /* Full height */
   overflow: auto;
-  /* Enable scroll if needed */
   background-color: rgb(0, 0, 0);
-  /* Fallback color */
   background-color: rgba(0, 0, 0, 0.4);
-  /* Black w/ opacity */
 }
 
-/* Modal Content/Box */
+/* style for modal content */
 .modal-content {
   background-color: #fefefe;
   margin: 15% auto;
@@ -176,6 +178,7 @@
   flex-direction: column;
 }
 
+/* style for label in modal content */
 .modal-content label {
   margin-bottom: 10px;
   font-weight: 500;
@@ -183,44 +186,54 @@
   color: var(--primary-color);
 }
 
+/* style for input in modal content (login modal and payment modal) */
 .modal-content input {
   margin-bottom: 10px;
   padding: 10px;
 }
 
+/* style for button in modal content */
 .modal-content button {
   align-self: flex-end;
 }
 
+/* hiding the logout button by default */
 .logout-btn {
   display: none;
 }
 
+/* style for title in order modal */
 .order-modal-title{
   color: var(--primary-color);
 }
-.order-modal-title span{
+
+/* style for close icon of modal */
+.order-modal-title .close-icon{
   float: right;
   color:var(--red-color);
   cursor: pointer;
 }
 
+/* style for order items and the order total amount */
 .order-modal-list p, .modal-total{
   padding: 15px;
   font-size: 1.2rem;
   font-weight: 700;
 }
+
+/* style for order amount value */
 .modal-total span{
   float: right;
 }
 
+/* style for remove order item icon */
 .order-modal-remove{
   color: var(--primary-color);
   cursor: pointer;
   float: right;
 }
-
 /* ******************************* */
+
 /* ***********MENU************* */
 /* Welcome Text Section */
 #welcome-container {
@@ -237,18 +250,21 @@
 
 /* ******************************* */
 /* ***********FILTERING SECTION************* */
+/* stype for parent div of filtering sections*/
 #filter-section {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   margin: 5px;
 }
 
+/* stype for filter buttons */
 .filter-buttons .secondary-btn {
   padding: 0.8rem;
   margin: 10px 5px;
   cursor: pointer;
 }
 
+/* stype for filter checkboxes */
 .filter-checkboxes {
   display: flex;
   margin: 10px;
@@ -256,10 +272,12 @@
   font-size: 24px;
 }
 
+/* style for child div of the .filter-checkboxes */
 .filter-checkboxes > div {
   margin-right: 15px;
 }
 
+/* style for parent div of searchbar and sorting dropdown */
 .filter-2 {
   display: flex;
   flex-direction: column;
@@ -268,6 +286,7 @@
   margin-right: 10px;
 }
 
+/* style for searchbar input */
 .search-bar {
   position: relative;
   width: 26rem;
@@ -280,14 +299,7 @@
   margin-top: 12px;
 }
 
-/* .search-bar-container button {
-  position: absolute;
-  top: 240px;
-  right: 25px;
-  border: none;
-  background: none;
-} */
-
+/* style for sorting dropdown */
 .sort-dropdown .sortby {
   margin-top: 5px;
   width: 18rem;
@@ -297,22 +309,24 @@
   border: none;
   font-size: 18px;
 }
-
 /* ******************************* */
 
 /* ***********PRODUCTS AND CART************* */
+/* style for parent div of products and cart */
 .products-cart {
   display: flex;
 }
 
+/* style for parent div of list of products*/
 .products {
-  /* flex: 0 0 70%; */
   max-width: 70%;
   padding: 10px;
   display: flex;
   flex-wrap: wrap;
   flex-grow: 1;
 }
+
+/* style for each product item */
 .product-item {
   width: calc(33.333% - 10px);
   height: 15rem !important;
@@ -326,11 +340,13 @@
   flex-direction: column;
 }
 
+/* style for elements in product item */
 .flex-container {
   display: flex;
   align-items: center;
 }
 
+/* style for prodcut info in product item */
 .product-item .product-info {
   flex-grow: 1;
   margin-left: 10px;
@@ -341,11 +357,13 @@
   height: 80px;
 }
 
+/* margin 0 for h3 and p tags in product info */
 .product-item .product-info h3,
 .product-item .product-info p {
   margin: 0;
 }
 
+/* style for image in product item */
 .product-item .product-image {
   width: 80px;
   filter: invert(100%);
@@ -353,38 +371,58 @@
   flex-shrink: 0;
 }
 
+/* style for divider in product item */
 .product-item .divider {
   width: 100%;
   border-top: 1px solid #ccc;
   margin: 10px 0;
 }
 
+/* style for the info after divider in product item */
 .bottom-info {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
 }
 
+/* style for p tag in bottom info in product item */
 .bottom-info p {
   margin: 0;
 }
 
+/* style for paragraphs in .bottom-info, except the last one */
 .bottom-info p:not(:last-child) {
-  margin-right: 5px; /* Adjust as needed */
-  padding-right: 5px; /* Adjust as needed */
+  margin-right: 5px;
+  padding-right: 5px;
   border-right: 1px solid #ccc;
 }
 
+/* style for product actions in product item (staff view) */
 .product-actions {
   display: flex;
   margin-top: 5px;
   justify-content: space-between;
 }
 
+/* style for low-stock text in product item */
 .low-stock{
   color: rgb(237, 28, 36);
 }
 
+/* style for buttons in product-actions */
+.product-actions button {
+  background: none;
+  border: none;
+  color: var(
+    --warning-color
+  );
+  padding: 0;
+  margin: 0 5px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* style for parent div of low stock and alert secutiry button (staff view) */
 .staff-alert{
   display: flex;
   flex-direction: column;
@@ -392,12 +430,14 @@
   margin-top: 10px;
 }
 
+/* style for low stock at the top of the menu (staff view) */
 .staff-alert p {
   color:var(--red-color);
   font-size: 20px;
   font-weight: 500;
 }
 
+/* style for alert security button (staff view) */
 .staff-alert button {
   color:var(--white-color);
   background-color: var(--red-color);
@@ -411,18 +451,7 @@
   cursor: pointer;
 }
 
-.product-actions button {
-  background: none; /* Remove button background */
-  border: none; /* Remove button border */
-  color: var(
-    --warning-color
-  ); /* Set the text color (assuming you want to keep the white color from your design) */
-  padding: 0; /* Remove padding */
-  margin: 0 5px; /* Optional: add some space between the buttons */
-  cursor: pointer; /* Change mouse cursor to pointer to indicate the element is clickable */
-  text-decoration: underline;
-}
-
+/* style for parent div of cart (customer) and orders list (staff) */
 .cart-container,
 .orders-container {
   display: flex;
@@ -437,15 +466,18 @@
   max-height: 800px;
 }
 
+/* enable scroll for orders list container */
 .orders-container{
   overflow: auto;
 }
 
+/* style for parent div of items in the cart */
 .cart-items{
   max-height: 500px;
   overflow: auto;
 }
 
+/* style for title in cart container and orders container */
 .cart-container .order-title,
 .orders-container .order-title {
   text-align: center;
@@ -454,6 +486,7 @@
   color: var(--primary-color);
 }
 
+/* style for empty text in cart container and orders container*/
 .cart-container .empty-text,
 .orders-container .empty-text {
   text-align: center;
@@ -462,6 +495,7 @@
   color: var(--primary-color);
 }
 
+/* style for each item in cart */
 .cart-container .cart-item {
   color: var(--primary-color);
   margin-left: 10px;
@@ -471,10 +505,12 @@
   align-items: center;
 }
 
+/* style for each item price in cart */
 .cart-container .cart-item .item-price {
   margin-left: auto;
 }
 
+/* style for remove item icon in cart */
 .cart-container .cart-item .remove-icon {
   margin-left: 5px;
   font-size: 32px;
@@ -482,24 +518,25 @@
   cursor: pointer;
 }
 
-.service-options,
-.payment-options {
+/* style for service options at the bottom of cart */
+.service-options {
   display: flex;
   flex-direction: column;
   margin: 20px 0;
 }
 
-.service-options label,
-.payment-options label {
+/* style for label in service options at the bottom of cart */
+.service-options label {
   margin: 10px 0;
 }
 
+/* style for table number at the bottom of the cart */
 .table-number {
   display: flex;
 }
 
-.total-section,
-.amount-due {
+/* style for total amount section at the bottom of cart*/
+.total-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -511,28 +548,33 @@
   font-weight: 500;
 }
 
+/* style for the bottom section in cart*/
 .bottom-section {
   margin-top: auto;
   color: var(--primary-color);
-  /* This pushes the bottom section to the bottom of the flex container */
 }
 
+/* style for submit order in cart */
 #place-order,
 #submit-vip {
   display: block;
-  /* Make it a block element to enable margin auto */
   margin-right: 8px;
 }
 
+/* parent div for buttons in cart */
 .cart-buttons {
   display: flex;
 }
 
+/* style for hr tag */
 .hr-style {
   margin: 8px;
   border-top: 2px solid var(--primary-color);
 }
+/* ******************************* */
 
+/* ***********ORDERS (Staff)************* */
+/* style for each order item in orders list */
 .orders-container .order-item {
   padding: 10px;
   border-radius: 10px;
@@ -543,20 +585,25 @@
   height: 100px;
 }
 
+/* style for order status in each order item */
 .order-item .order-status{
   display: inline-block;
   margin-top: 5px;
 }
 
+/* style for order when its status is fullfilled */
 .order-fullfilled {
   background-color: var(--secondary-color);
   color: var(--white-color);
 }
 
+/* style for order when its status is pending */
 .order-pending {
   background-color: var(--white-color);
   color: var(--secondary-color);
 }
+
+/* style for order's status when it's pending */
 .order-pending .order-status {
   background-color: rgba(255, 140, 0, 0.192);
   color: rgb(255, 140, 0);
@@ -565,11 +612,13 @@
   border: 1px solid rgb(255, 140, 0);
 }
 
+/* push order number and order total amount to the right side of order item */
 .order-number,
 .order-amount {
   float: right;
 }
 
+/* style for order total amount of each order item */
 .order-amount {
   position: absolute;
   bottom: 0;
