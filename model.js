@@ -1,5 +1,4 @@
-// ##################
-// #  Model class   #
+// Model class 
 // ##################
 // Users
 // Products
