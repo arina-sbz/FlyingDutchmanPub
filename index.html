@@ -2,28 +2,41 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Sets the viewport to ensure the site is mobile-responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Title of the project -->
     <title>Flying Dutchman Pub</title>
+    <!-- Stylesheet Link, css file for styling -->
     <link rel="stylesheet" href="assets/style.css" />
+    <!-- Favicon: icon for the project in the browser tab -->
     <link rel="icon" href="./assets/images/logo.png" type="image/x-icon" />
+    <!-- link to the 'Fira Sans' font family -->
     <link
       href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+    <!-- link to the 'Inknut Antiqua' font family -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
-
+    <!-- Import the 'Material Symbols' font for icons and symbols -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
     />
+    <!-- Import 'Material Icons' -->
+
     <link
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Import Font Awesome icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <!-- Add the jQuery library -->
     <script
       type="text/javascript"
       src="Dutchman files/jquery-3.3.1.min.js"
@@ -33,49 +46,62 @@
   <body>
     <!-- landing page of the pub -->
     <div id="landing"></div>
+    <!-- main div of the project -->
     <div id="app">
       <!-- header of the app -->
       <div id="header">
+        <!-- parent div for VIP login and logout buttons -->
         <div class="login">
+          <!-- VIP login button -->
           <button class="primary-btn login-btn">VIP Login</button>
+          <!-- Logout button -->
           <button class="primary-btn logout-btn">Log Out</button>
         </div>
+        <!-- parent div for logo  -->
         <div class="logo">
+          <!-- logo of the project -->
           <img id="pub-logo" src="assets/images/logo.png" alt="pub-logo" />
         </div>
+        <!-- parent div for languages -->
         <div class="lang">
+          <!-- language icon  -->
           <span class="material-symbols-outlined">language</span>
         </div>
       </div>
-      <!-- welcome text -->
+      <!-- div container for welcome text -->
       <div id="welcome-container"></div>
-      <!-- login modal -->
+      <!-- parent div for login modal -->
       <div class="modal-container" id="login-modal-container">
+        <!-- div for login modal -->
         <div class="modal" id="login-modal"></div>
       </div>
       <!-- filtering section -->
       <div id="filter-section">
+        <!-- parent div for both filtering buttons and checkboxes -->
         <div class="filter-1">
+          <!-- parent div for filtering buttons ('All','Beer','Wine','Spirit') -->
           <div class="filter-buttons"></div>
+          <!-- parent div for filtering checkboxes ('Gluten Free', 'Tannin Free', 'Organic','Kosher')-->
           <div class="filter-checkboxes">
+            <!-- checkbox for selecting gluten-free option -->
             <div class="gluten-checkbox">
               <input type="checkbox" class="gluten" />
               <span class="checkmark"></span>
               Gluten Free
             </div>
-
+            <!-- checkbox for selecting tannin-free option -->
             <div class="tannin-checkbox">
               <input type="checkbox" class="tannin" />
               <span class="checkmark"></span>
               Tannin Free
             </div>
-
+            <!-- checkbox for selecting organic option -->
             <div class="organic-checkbox">
               <input type="checkbox" class="organic" />
               <span class="checkmark"></span>
               Organic
             </div>
-
+            <!-- checkbox for selecting kosher option -->
             <div class="kosher-checkbox">
               <input type="checkbox" class="kosher" />
               <span class="checkmark"></span>
@@ -83,17 +109,18 @@
             </div>
           </div>
         </div>
-        <div class="staff-alert">
-          
-        </div>
+        <!-- parent div for showing low-stock and Alert Security button to staff -->
+        <div class="staff-alert"></div>
+        <!-- parent div for both filtering dropdown and searchbar -->
         <div class="filter-2">
+          <!-- parent div for search input -->
           <div class="search-bar-container">
+            <!-- search input -->
             <input type="text" placeholder="Search..." class="search-bar" />
-            <!-- <button type="submit">
-              <span class="material-icons">search</span>
-            </button> -->
           </div>
+          <!-- parent div for filtering dropdown -->
           <div class="sort-dropdown">
+            <!-- dropdown menu for sorting options -->
             <select name="sortby" class="sortby">
               <option value="featured">All</option>
               <option value="price_low_high">Price: Low to High</option>
@@ -104,33 +131,41 @@
           </div>
         </div>
       </div>
-      <!-- Menu page for customers -->
+      <!-- parent div of the whole menu (products + cart) for customers -->
       <div id="menu-container">
-        <!-- welcome user text -->
-
-        <!-- products section -->
+        <!-- parent div for products and cart -->
         <div class="products-cart">
+          <!-- parent div for list of products -->
           <div class="products"></div>
+          <!-- parent div for cart -->
           <div class="cart-container"></div>
         </div>
-        <!-- payment modal -->
+        <!-- parent div for payment modal -->
         <div class="modal-container" id="payment-modal-container">
+          <!-- div for payment modal -->
           <div class="modal" id="payment-modal"></div>
         </div>
       </div>
-      <!-- staff page here -->
+      <!-- parent div for staff-->
       <div id="staff-container">
+        <!-- parent div for products and orders list -->
         <div class="products-cart">
+          <!-- parent div for list of products -->
           <div class="products"></div>
+          <!-- parent div for list of orders -->
           <div class="orders-container"></div>
         </div>
+        <!-- parent div for view order modal -->
         <div class="order-modal-container" id="order-modal-container">
+          <!-- view order modal -->
           <div class="modal" id="order-modal"></div>
         </div>
       </div>
     </div>
 
+    <!-- import the module for the data model (model.js) -->
     <script type="module" src="model.js"></script>
+    <!-- import the module for the controller -->
     <script type="module" src="controller.js"></script>
   </body>
 </html>
