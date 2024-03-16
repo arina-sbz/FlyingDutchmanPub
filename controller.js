@@ -69,6 +69,7 @@ function returnFilterButtons() {
 function showMenu(filteredProducts) {
   const productsDiv = $(".products");
   productsDiv.empty();
+
   if (filteredProducts.length === 0) {
     productsDiv.innerHTML = `<p class="no-products">No products found</p>`;
   }
@@ -667,6 +668,18 @@ function showStaffMain() {
   $("#filter-section").show();
   $("#welcome-container").show();
   $(".logout-btn").show();
+  $(".staff-alert").append(
+    `
+      <p>
+      <i class="fas fa-exclamation-circle"></i>
+      Low Stock: 5 items
+      </p>
+      <button class="alert-security">
+      <i class="fas fa-shield-alt"></i>
+      Alert Security
+      </button>
+    `
+  );
   updateOrdersList();
   // applyFilters();
 }
@@ -700,19 +713,20 @@ function updateOrdersList() {
     });
 
     ordersList.forEach((item) => {
-      let statusClass;
-      let statusIcon;
-      switch (item.status) {
-        case "fullfilled":
-          statusClass = "order-fullfilled";
-          statusIcon = '<i class="fas fa-check-circle"></i>';
-          break;
-        default:
-          statusClass = "order-pending";
-          statusIcon = '<i class="fas fa-hourglass-half"></i>';
-      }
+      if (item.amount > 0) {
+        let statusClass;
+        let statusIcon;
+        switch (item.status) {
+          case "fullfilled":
+            statusClass = "order-fullfilled";
+            statusIcon = '<i class="fas fa-check-circle"></i>';
+            break;
+          default:
+            statusClass = "order-pending";
+            statusIcon = '<i class="fas fa-hourglass-half"></i>';
+        }
 
-      ordersListContainer.append(`
+        ordersListContainer.append(`
       <div class="order-item ${statusClass}" data-order_nr="${item.order_nr}">
       <h4 class="order-type">${
         item.type === "table"
@@ -724,11 +738,12 @@ function updateOrdersList() {
       <p class="order-number"> #${item.order_nr} </p>
       </h4>
       <span class="order-status ${statusClass}">${statusIcon} ${
-        item.status
-      } </span>
+          item.status
+        } </span>
       <span class="order-amount">${item.amount} SEK</span>
       </div>
       `);
+      }
     });
   }
 }
@@ -741,27 +756,28 @@ function removeItemFromOrder(orderNr, itemNr) {
     if (item) {
       if (item.quantity > 1) {
         item.quantity -= 1;
-        console.log('2');
       } else {
         const itemIndex = order.items.findIndex((item) => item.nr == itemNr);
         if (itemIndex !== -1) {
           order.items.splice(itemIndex, 1);
         }
       }
-      console.log('3');
-      const orderIndex = ordersList.findIndex((order) => order.order_nr === orderNr);
-      console.log('4');
+      const orderIndex = ordersList.findIndex(
+        (order) => order.order_nr === orderNr
+      );
+      const totalPrice = order.items.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
+      order.amount = totalPrice;
       if (orderIndex !== -1) {
         ordersList[orderIndex] = order;
         localStorage.setItem("orders", JSON.stringify(ordersList));
-        // Close the modal
-        console.log('5');
-       $("#order-modal").hide();
-        // Update the order list
+        $("#order-modal").hide();
         updateOrdersList();
       }
     }
-  } 
+  }
 }
 
 function viewOrderItem(orderNr) {
@@ -782,8 +798,11 @@ function viewOrderItem(orderNr) {
         ${order.items
           .map(
             (item) => `<p> ${item.quantity}X ${item.name} 
-            ${order.status == 'pending' ? 
-          `<span class="order-modal-remove" data-order_nr="${order.order_nr}" data-item_nr="${item.nr}"><i class="fas fa-times"></i></span>` : ''}
+            ${
+              order.status == "pending"
+                ? `<span class="order-modal-remove" data-order_nr="${order.order_nr}" data-item_nr="${item.nr}"><i class="fas fa-times"></i></span>`
+                : ""
+            }
         </p> `
           )
           .join("")}
@@ -917,11 +936,13 @@ function callEventListeners() {
     $("#order-modal").hide();
   });
 
-  $(document).on('click', '.order-modal-remove', function() {
-    const orderNr = $(this).data('order_nr');
-    const itemNr = $(this).data('item_nr');
-    removeItemFromOrder(orderNr, itemNr); 
-});
+  $(document).on("click", ".order-modal-remove", function () {
+    const orderNr = $(this).data("order_nr");
+    const itemNr = $(this).data("item_nr");
+    removeItemFromOrder(orderNr, itemNr);
+  });
 
-  // $(".split-amount").on("input", updateAmountDue);
+  $(document).on("click", ".alert-security", function (event) {
+    alert("Security has been alerted!");
+  });
 }

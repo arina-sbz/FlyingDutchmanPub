@@ -244,7 +244,7 @@
 /* ***********FILTERING SECTION************* */
 #filter-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr;
   margin: 5px;
 }
 
@@ -386,8 +386,34 @@
   justify-content: space-between;
 }
 
-.low-stock {
+.low-stock{
   color: rgb(237, 28, 36);
+}
+
+.staff-alert{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.staff-alert p {
+  color:var(--red-color);
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.staff-alert button {
+  color:var(--white-color);
+  background-color: var(--red-color);
+  padding: 15px;
+  border-radius:15px;
+  box-shadow: none;
+  border:none;
+  font-size: 20px;
+  margin-top: 10px;
+  width: 12rem;
+  cursor: pointer;
 }
 
 .product-actions button {
