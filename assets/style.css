@@ -11,11 +11,6 @@
   --gray-color: #d9d9d9;
 }
 
-/* Hide scrollbar */
-::-webkit-scrollbar {
-  display: none;
-}
-
 /* global style */
 * {
   margin: 0;
@@ -439,7 +434,16 @@
   border-radius: 10px;
   margin: 10px 15px 15px 5px;
   min-height: 100vh;
-  /* Ensure the container takes full height */
+  max-height: 800px;
+}
+
+.orders-container{
+  overflow: auto;
+}
+
+.cart-items{
+  max-height: 500px;
+  overflow: auto;
 }
 
 .cart-container .order-title,

@@ -213,8 +213,9 @@ function updateCartUI() {
     );
   } else {
     // Iterate through items in the cart and create list items for each
+    cartContainer.append(`<ul class="cart-items"></ul>`)
     cart.forEach((item) => {
-      cartContainer.append(`
+      $('.cart-items').append(`
       <li class="cart-item" draggable="true" data-nr="${item.nr}">
       ${item.quantity}x ${item.name}
       <p class="item-price"> ${item.price}SEK </p>

@@ -917,7 +917,7 @@ export var DB = {
           nr: "1004703",
           name: "Nils Oscar",
           quantity: 1,
-          price:"43.70"
+          price: "43.70",
         },
       ],
       amount: "43.70",
@@ -933,16 +933,16 @@ export var DB = {
           nr: "1004703",
           name: "Nils Oscar",
           quantity: 1,
-          price:"43.70",
+          price: "43.70",
         },
         {
           nr: "1101003",
           name: "Corsendonk Christmas Ale",
           quantity: 2,
-          price:"20.90",
+          price: "20.90",
         },
       ],
       amount: "85.50",
-    },
+    }
   ],
 };
