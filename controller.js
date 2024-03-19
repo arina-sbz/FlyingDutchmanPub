@@ -1,10 +1,13 @@
+
+// imports dictionary from dictionary.js
+import { dictionary } from "./dictionary.js";
+// imports the DB object from model.js
 import { DB } from "./model.js";
 
 // global variables
 let cart = [];
 let role = "";
 let currentSystem = "";
-let userFullName = "";
 let orders = [];
 let currentFilters = {
   type: "All",
@@ -16,24 +19,24 @@ let currentFilters = {
   isKosher: false,
 };
 
+// Functions to call when the DOM is fully loaded
 $(document).ready(function () {
   showLandingPage();
   callEventListeners();
   checkAuthentication();
   updateWelcomeText();
   setOrdersInStorage();
+updateServiceOptions();
+  // Listens for changes on service input fields and calls toggleTableNumberInput function
   $(document).on("change", "input[name='service']", function () {
     toggleTableNumberInput();
   });
-  updateServiceOptions();
-  renderUndoArrow();
+  });
 
-});
-
-// ******Functions******
-// landing page
+// function for showing landing page
 function showLandingPage() {
   $("#landing").hide();
+// append the elements of landing page
   $("#landing").append(
     `
     <div class="landing-container">
@@ -49,20 +52,24 @@ function showLandingPage() {
   </div>
     `
   );
+// show landing div after appending its elements
   $("#landing").show();
+// hide the app div
   $("#app").hide();
 }
 
-// Menu
+// function to show filter buttons
 function returnFilterButtons() {
+// defining the title for filter buttons
   var categories = ["All", "Beer", "Wine", "Spirit"];
+// appending the filter buttons to the filter section
   categories.forEach((category) => {
+    const categoryKey = category.toLowerCase(); // Get the category key
     $(".filter-buttons").append(
-      `<button type="button" class="secondary-btn">${category}</button>`
+      `<button type="button" id="${categoryKey}" class="secondary-btn">${category}</button>`
     );
-    $(".filter-buttons .secondary-btn").on("click", function () {
-      const categoryName = $(this).text();
-      filterByType(categoryName);
+    $(`.filter-buttons #${categoryKey}`).on("click", function () {
+      filterByType(category); // Pass the English category name to filterByType function
     });
   });
 }
@@ -71,14 +78,13 @@ function returnFilterButtons() {
 function showMenu(filteredProducts) {
   const productsDiv = $(".products");
   productsDiv.empty();
-
+// If no products are found, display a message
   if (filteredProducts.length === 0) {
     productsDiv.innerHTML = `<p class="no-products">No products found</p>`;
   }
-
-  // Iterate through filtered products and create elements for each
+// Iterate through filtered products and create elements for each of them
   filteredProducts.forEach((product) => {
-    // Create the product item element
+    // create the product item element
     const productItem = $(`
     <div class="product-item" draggable="true" id="${product.nr}">
         <div class="flex-container">
@@ -136,8 +142,8 @@ function showMenu(filteredProducts) {
                 <span class="${product.stock > 5 ? "" : "low-stock"}">Stock: ${
                 product.stock ? `<span>${product.stock}</span>` : ""
               }</span>
-                <button type="button">Edit</button>
-                <button type="button">Remove</button>
+              <button type="button">Edit</button>
+              <button type="button">Remove</button>
             </div>
         `
             : ``
@@ -146,7 +152,7 @@ function showMenu(filteredProducts) {
     </div>
 `);
 
-    // Bind the click event to this specific product item
+    // Bind the click event to this specific product item (to be added to the cart)
     productItem.on("click", () => {
       addToCart(product.nr, product.name, product.price);
     });
@@ -181,6 +187,7 @@ function filterByType(typeName) {
   showMenu(filteredProducts);
 }
 
+// function to call to show filter buttons and then call filterByType("All") to show all products
 function showFilters() {
   returnFilterButtons();
   filterByType("All");
@@ -188,155 +195,36 @@ function showFilters() {
 
 // Function to add a product to the shopping cart
 function addToCart(nr, name, price) {
+// Find the index of the item in the cart
   const itemIndex = cart.findIndex((item) => item.nr === nr);
-
   if (itemIndex > -1) {
     cart[itemIndex].quantity += 1; // If the item exists in the cart, increase its quantity
   } else {
     cart.push({ nr, name, price, quantity: 1 }); // If the item is not in the cart, add it as a new item
   }
-  // const undoAction = () => unAddToCart({ nr, name, price }); // Define the undo action
-  const undoAction = () => unAddToCart({ nr }); // Define the undo action
-  undoStack.push(undoAction); // Push the undo action to the undo stack
-  redoStack = []; // Clear redo stack when a new action is performed
-
   // Update the cart UI to reflect the changes
-  updateCartUI(renderUndoArrow); // Pass renderUndoArrow as a callback
-  console.log('Item added to cart:', { nr, name, price });
-  console.log('Updated cart:', cart);
-  console.log('Undo Stack:', undoStack);
+  updateCartUI();
 }
 
-
-// Function to undo the add to cart action
-function unAddToCart(item) {
-  const undoAction = () => removeFromCart(item.nr); // Remove the item from the cart
-  // redoStack.push(() => addToCart(item.nr)); // Define the redo action
-  undoAction(); // Execute the undo action immediately
-  undoStack.pop(); // Remove the undo action from the undo stack
-  // console.log('undoStack:', undoStack);
-  console.log('unadded item:', item.nr);
-}
-
-// Function to remove a product from the shopping cart
-function removeFromCart(nr) {
-  const itemIndex = cart.findIndex((item) => item.nr == nr);
-
-  if (itemIndex > -1) {
-    const removedItem = cart[itemIndex]; // Store the removed item
-    if (removedItem.quantity > 1) {
-      removedItem.quantity -= 1; // Decrease the item's quantity by 1 if more than 1
-    } else {
-      cart.splice(itemIndex, 1); // Remove the item from the cart if quantity is 1
-    }
-    const undoAction = () => unRemoveFromCart(removedItem); // Define the undo action
-    undoStack.push(undoAction); // Push the undo action to the undo stack
-    redoStack = []; // Clear redo stack when a new action is performed
-
-    // Update the cart UI to reflect the changes
-    updateCartUI(renderUndoArrow); // Pass renderUndoArrow as a callback
-    console.log('Item removed from cart:', removedItem);
-    console.log('Updated cart:', cart);
-  }
-}
-
-// Undo action: remove item from cart
-function unRemoveFromCart(item) {
-  const undoAction = () => {
-    cart.push(item); // Restore the item to the cart
-    const redoAction = () => removeFromCart(item.nr); // Define the redo action
-    redoStack.push(redoAction); // Push the redo action to the redo stack
-    updateCartUI(renderUndoArrow); // Update the cart UI
-  };
-  const redoAction = () => addToCart(item.nr, item.name, item.price); // Define the corresponding redo action
-  undoAction(); // Execute the undo action immediately
-  redoStack.push(redoAction); // Store the corresponding redo action in the redo stack
-}
-
-// Redo action: add item back to cart
-function redoAddToCart(item) {
-  const redoAction = () => {
-    addToCart(item.nr, item.name, item.price); // Add the item back to the cart
-    const undoAction = () => removeFromCart(item.nr); // Define the corresponding undo action
-    undoStack.push(undoAction); // Push the undo action to the undo stack
-    updateCartUI(renderUndoArrow); // Update the cart UI
-  };
-  const undoAction = () => unRemoveFromCart(item); // Define the corresponding undo action
-  redoAction(); // Execute the redo action immediately
-  undoStack.push(undoAction); // Store the corresponding undo action in the undo stack
-}
-// Function to clear the shopping cart
-function clearCart() {
-  const clearedCart = [...cart]; // Make a copy of the current cart
-  cart = [];
-  updateCartUI(renderUndoArrow); // Pass renderUndoArrow as a callback
-  unClearCart(clearedCart); // Add undo action to the undo stack
-}
-
-// Function to add the inverse of the cleared action to the undo stack when the cart is cleared
-function unClearCart(items) {
-  const undoAction = () => {
-    items.forEach(item => cart.push(item)); // Restore the items to the cart
-  };
-  undoStack.push(undoAction); // Push the undoAction to the undo stack
-}
-
-
-//// UNDO-REDO Implementation
-let undoStack = [];
-let redoStack = [];
-
-function renderUndoArrow() {
-  const orderTitle = $(".order-title");
-  
-  // Create undo arrow element
-  const undoArrow = $("<button>")
-  .addClass("material-icons undo-icon")
-  .text("undo")
-  .on("click", function () {
-    if (undoStack.length > 0) {
-      const undoAction = undoStack.pop(); // Pop the last undo action from the undo stack
-      undoAction(); // Call the undo action directly
-      redoStack.push(undoAction); // Push the undo action to the redo stack
-      console.log('redoStack:', redoStack);
-      updateCartUI(renderUndoArrow); // Update the cart UI after undoing action
-    }
-  });
-
-  // Append both arrows to the orderTitle element
-  orderTitle.append(undoArrow);
-  
-  // Check if the undo stack is empty and adjust the styling accordingly
-  if (undoStack.length === 0) {
-  undoArrow.addClass("disabled"); // Add a disabled class
-  }
-  else{
-  undoArrow.removeClass("disabled");
-  }
-}
-  // Function to update the shopping cart UI
-function updateCartUI(callback) {
+// Function to update the shopping cart UI
+function updateCartUI() {
   const cartContainer = $(".cart-container");
   cartContainer.empty();
-
-
-
-  
-  // cartContainer.append(undoArrow);
-  cartContainer.append(`<div class="order-title">Order Summary</div>
+  cartContainer.append(`<div class="order-title" id="order_summary"></div>
   <hr class="hr-style"> </hr>`);
+// If the cart is empty, display a message
   if (cart.length == 0) {
     cartContainer.append(
       `<div class="empty-text">
-      <p>Your cart is empty!</p>
-      <p>You can add products by clicking on them or dragging them to the cart.</p>
+      <p id="empty-cart"></p>
+      <p id="add_products_instruction"></p>
       </div>`
     );
   } else {
     // Iterate through items in the cart and create list items for each
-    cartContainer.append(`<ul class="cart-items"></ul>`)
+    cartContainer.append(`<ul class="cart-items"></ul>`);
     cart.forEach((item) => {
-      $('.cart-items').append(`
+      $(".cart-items").append(`
       <li class="cart-item" draggable="true" data-nr="${item.nr}">
       ${item.quantity}x ${item.name}
       <p class="item-price"> ${item.price}SEK </p>
@@ -344,65 +232,75 @@ function updateCartUI(callback) {
       </li>
       `);
     });
-    // append the checkout options
+    // append the service options (table, bar or fridge), total amount, and buttons
     cartContainer.append(`
     <div class="bottom-section">
     <div class="service-options">
       <label>
-      <input type="radio" name="service" value="table"> Table Service
+      <input type="radio" name="service" value="table">
+      <span id="table_service"></span>
       </label>
       <label>
-      <input type="radio" name="service" value="bar"> Bar Pick-Up
+      <input type="radio" name="service" value="bar">
+      <span id="bar_pick_up"></span>
       </label>
     </div>
     <div class="table-number" style="display: none;">
-    <label for="table-number">Table Number:</label>
+    <label for="table-number" id="table_number_label"></label>
     <input type="text" id="table-number" name="table-number">
     </div>
 
     <div class="total-section">
-      <span>TOTAL</span>
+      <span id="total"></span>
       <span class="total-price">${updateTotalPriceDisplay()}</span>
     </div>
     
     <div class="cart-buttons">
-    ${
-      localStorage.getItem("role") == 3
-        ? '<button type="button" id="submit-vip" class="secondary-btn">Place Order</button>'
-        : '<button type="button" id="place-order" class="secondary-btn">Place Order</button>'
-    }
-    <button type="button" id="clear-cart" class="red-btn">Clear Cart</button>
+      ${
+        localStorage.getItem("role") == 3
+          ? `<button type="button" id="submit-vip" class="secondary-btn">
+              <span id="submit-vip-text"></span>
+            </button>`
+          : `<button type="button" id="place-order" class="secondary-btn">
+              <span id="place-order-text"></span>
+            </button>`
+      }
+      <button type="button" id="clear-cart" class="red-btn">
+        <span id="clear-cart-text"></span>
+      </button>
     </div>
-    </div>
-    `);
+  </div>
+  `);
+  
 
-    $("#clear-cart").on("click", function () {
-      clearCart();
-    });
+  // Event listener for clear-cart button
+  $("#clear-cart").on("click", function () {
+    clearCart();
+  });
 
-    $("#submit-vip").on("click", function () {
-      openPayment();
-    });
+// Event listener for submit-vip button
+  $("#submit-vip").on("click", function () {
+    openPayment();
+  });
 
-    $("#place-order").on("click", function () {
-      placeOrder();
-    });
+// Event listener for place-order button
+  $("#place-order").on("click", function () {
+    placeOrder();
+  });
 
-    // manageAmountDue();
-    // updateAmountDue();
-    // Update the total price in the UI
-    updateServiceOptions();
-    updateTotalPrice();
-    updateTotalPriceDisplay();
-  }
-
-  // Call the callback function if provided
-  if (typeof callback === 'function') {
-    callback();
+  // functions to call when the cart is updated
+    // update the service options
+  updateServiceOptions();
+// update the total amount
+  updateTotalPrice();
+// update the display of total amount
+  updateTotalPriceDisplay();
   }
 }
 
+// Function to toggle the table number input based on the selected service option
 function toggleTableNumberInput() {
+// if the selected service was table, show the table number input
   if ($("input[name='service']:checked").val() === "table") {
     $(".table-number").show();
   } else {
@@ -410,12 +308,12 @@ function toggleTableNumberInput() {
   }
 }
 
-
-// Function to update the total price in the UI
+// Function to update the total amount of the order
 function updateTotalPrice() {
   return cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 }
 
+// Function to update the total amount display
 function updateTotalPriceDisplay() {
   const totalPriceElement = document.querySelector(".total-price");
   if (totalPriceElement) {
@@ -423,19 +321,31 @@ function updateTotalPriceDisplay() {
   }
 }
 
-
-function fetchCart() {
-  updateCartUI();
+// Function to remove a product from the cart
+function removeFromCart(nr) {
+// Find the index of the item in the cart
+  const itemIndex = cart.findIndex((item) => item.nr == nr);
+  if (itemIndex > -1) {
+    if (cart[itemIndex].quantity > 1) {
+      cart[itemIndex].quantity -= 1; // Decrease the item's quantity by 1 if more than 1
+    } else {
+      cart.splice(itemIndex, 1); // Remove the item from the cart if quantity is 1
+    }
+    updateCartUI(); // Update the cart UI to reflect the changes
+  }
 }
 
-// order
+// Function to get the order number
 function getOrderNumber() {
+// Get the current order number from localStorage
   let orderNumber = localStorage.getItem("orderNumber");
-
+// If there is no order number in localStorage, set it to 003 (there are already two items in the DB)
   if (!orderNumber) {
     orderNumber = "003";
   } else {
+// If there is an order number in localStorage, increment it by 1
     let nextOrderNumber = parseInt(orderNumber) + 1;
+// Pad the order number with leading zeros to make it 3 digits long
     orderNumber = nextOrderNumber.toString().padStart(3, "0");
   }
 
@@ -448,6 +358,7 @@ function getOrderNumber() {
 function placeOrder() {
   if (cart.length > 0) {
     const orderNumber = getOrderNumber();
+// Add the order to the orders array in localStorage
     orders.push({
       order_nr: orderNumber,
       username:
@@ -461,21 +372,31 @@ function placeOrder() {
       type: $("input[name='service']:checked").val(),
       status: "pending",
     });
+// Store the updated orders array in localStorage
     localStorage.setItem("orders", JSON.stringify(orders));
+// Show an alert with the order number and the fridge code (if the service is fridge)
     const randomNumber = Math.floor(Math.random() * 1000);
-    $("input[name='service']:checked").val() === "fridge"
-      ? alert(
-          `Order placed successfully. Your order number is ${orderNumber}. The fridge code is ${randomNumber}`
-        )
-      : alert(`Order placed successfully. Your order number is ${orderNumber}`);
+    const orderPlacedSuccessfullyMessage = getTranslation(dictionary.find(item => item.key === 'order_placed_successfully'), selectedLanguage);
+    const message = `${orderPlacedSuccessfullyMessage} ${orderNumber}`;
+    if ($("input[name='service']:checked").val() === "fridge") {
+      const fridgeCodeMessage = getTranslation(dictionary.find(item => item.key === 'fridge_code'), selectedLanguage);
+      alert(`${message} ${fridgeCodeMessage} ${randomNumber}`);
+    } else {
+      const orderPlacedSuccessfullyMessage2 = getTranslation(dictionary.find(item => item.key === 'order_placed_successfully2'), selectedLanguage);
+      alert(`${orderPlacedSuccessfullyMessage2} ${orderNumber}`);
+    }
     clearCart();
   } else {
-    alert(
-      "Cart is empty. Please add items to your cart before placing an order."
-    );
+    // If the cart is empty, show an alert
+    const cartEmptyMessage = getTranslation(dictionary.find(item => item.key === 'cart_empty'), selectedLanguage);
+    alert(cartEmptyMessage);
   }
+  // Update the UI with the language translations
+  updateView();
+
 }
 
+// Function to get the orders from DB and set it in localStorage
 function setOrdersInStorage() {
   orders = DB.orders;
   if (!localStorage.getItem("orders")) {
@@ -483,64 +404,96 @@ function setOrdersInStorage() {
   }
 }
 
+// Function to open the payment modal
 function openPayment() {
   $("#payment-modal").empty(); // Clear the modal content first
+// Append the form to the modal
   $("#payment-modal").append(
     `<form class="modal-content" id="payment-form">
-    <label for="card-number">Card Number</label>
+    <label for="card-number">
+    <span id="card_number"></span>
+    </label>
     <input type="text" id="card-number" placeholder="Enter Card Number" name="card-number" required>
 
     <label for="cvv">CVV</label>
     <input type="text" id="cvv" placeholder="Enter CVV" name="cvv" required>
 
-    <label for="expiry-date">Expiry Date</label>
+    <label for="expiry-date">
+    <span id="expiry_date"></span>
+    </label>
     <input type="text" id="expiry-date" placeholder="Enter Expiry Date" name="expiry-date" required>
 
-    <button type="submit" class="secondary-btn">Pay</button>
+    <button type="submit" class="secondary-btn">
+    <span id="pay"></span>
+    </button>
   </form>`
   );
   $("#payment-modal").show(); // Show the modal
 
-  // Attach the event listener here, after the form is created
+  // Attach the submit event listener here
   $("#payment-form").on("submit", function (e) {
     e.preventDefault(); // Prevent the default form submit action
+// Call the placeOrder function when the form is submitted
     placeOrder();
     $("#payment-modal").hide();
   });
+    // Update language translations
+    updateView();
 }
 
-// LOGIN
+// Function to clear the cart
+function clearCart() {
+  cart = [];
+  updateCartUI();
+}
+
+// Function to open the login modal
 function openLogin() {
   $("#login-modal").empty(); // Clear the modal content first
+// Append the form to the modal
   $("#login-modal").append(
     `<form class="modal-content" id="login-form"> 
-    <label for="uname">Username</label>
+    <label for="uname">
+    <span id="username-text"></span>
+    </label>
     <input type="text" id="username" placeholder="Enter Username" name="username" required>
 
-    <label for="psw">Password</label>
+    <label for="psw">
+    <span id="password-text"></span>
+    </label>
     <input type="password" id="password" placeholder="Enter Password" name="password" required>
 
-    <button type="submit" class="secondary-btn">Login</button>
+    <button type="submit" class="secondary-btn">
+      <span id="login-text"></span> 
+    </button>
   </form>`
   );
-  $("#login-modal").show(); // Show the modal
+  $("#login-modal").show();
 
-  // Attach the event listener here, after the form is created
+  // Attach the submit event listener
   $("#login-form").on("submit", function (e) {
     e.preventDefault(); // Prevent the default form submit action
+// Call the login function when the form is submitted
     login();
   });
+
+  // Update language translations
+  updateView();
 }
 
+// Function to login
 function login() {
+// Get the username and password from the form
   const username = $("#username").val();
   const password = $("#password").val();
-
+// if the username and password are valid, hide the login modal and show the main page
   if (validateUser(username, password)) {
+// Get the user from the DB
     var user = DB.users.find(
       (user) => user.username === username && user.password === password
     );
     $("#login-modal-container").hide();
+// Set the user details in localStorage
     localStorage.setItem("username", username);
     localStorage.setItem("role", user.credentials);
     localStorage.setItem("userId", user.user_id);
@@ -548,10 +501,13 @@ function login() {
       "userFullName",
       user.first_name + " " + user.last_name
     );
+// show staff elements if the currentSystem is set to staff
     if (currentSystem == "staff") {
       showStaffMain();
       updateWelcomeText();
-    } else {
+    }
+    // if the currentSystem is customer
+    else {
       $(".login-btn").hide();
       $(".logout-btn").show();
       updateWelcomeText();
@@ -563,17 +519,22 @@ function login() {
   }
 }
 
+// Function to logout
 function logout() {
+// Clear the user details from localStorage
   localStorage.removeItem("username");
   localStorage.removeItem("role");
   localStorage.removeItem("userId");
   localStorage.removeItem("userFullName");
   clearCart();
+// Show the landing page
   window.location.href = "index.html";
   $("#landing").show();
 }
 
+// Function to validate the user
 function validateUser(username, password) {
+// Check if the username and password are valid
   for (var i = 0; i < DB.users.length; i++) {
     if (DB.users[i].username == username) {
       if (DB.users[i].password == password) {
@@ -586,17 +547,11 @@ function validateUser(username, password) {
   return false;
 }
 
+// Function to call based on the role (vip or staff)
 function checkAuthentication() {
   if (localStorage.getItem("role") == "3") {
     role = localStorage.getItem("role");
-    // $("#welcome-container").append(`
-    //     <p>Welcome to Flying Dutchman Pub ${
-    //       localStorage.getItem("userFullName")
-    //         ? localStorage.getItem("userFullName")
-    //         : ""
-    //     }!</p>
-    //     <p> Enjoy our wide range of drinks and have a great time!</p>`);
-    updateServiceOptions();
+        updateServiceOptions();
     $(".login-btn").hide();
     $(".logout-btn").show();
   } else {
@@ -604,37 +559,45 @@ function checkAuthentication() {
     $(".logout-btn").hide();
   }
 }
+
+// Function to update the service options
 function updateServiceOptions() {
   const role = localStorage.getItem("role");
-
+// If the user is a vip customer, show the fridge service option
   if (role === "3") {
     $(".service-options").append(`
       <label>
-        <input type="radio" name="service" value="fridge"> Fridge Self-Service
+        <input type="radio" name="service" value="fridge">
+        <span id="fridge_self_service"></span>
       </label>
     `);
   } else {
     $('input[name="service"][value="fridge"]').closest("label").remove();
   }
+  // Update language translations
+  updateView();
 }
 
+// Function to update the welcome text based on the role
 function updateWelcomeText() {
   let position = "";
+// Set the position based on the role
   localStorage.getItem("role") == "0"
     ? (position = "Manager")
     : localStorage.getItem("role") == "1"
     ? (position = "Bartender")
     : (position = "Waiter");
   $("#welcome-container").empty();
+// Append the welcome text based on the role
   if (localStorage.getItem("currentSystem") == "customer") {
     $("#welcome-container").append(
-      `<p>Welcome to Flying Dutchman Pub ${
+      `<p><span id="welcome-text"></span> ${
         localStorage.getItem("role") == "3"
           ? localStorage.getItem("userFullName")
           : "" || ""
       }!</p>` +
         (localStorage.getItem("currentSystem") == "customer"
-          ? "<p> Enjoy our wide range of drinks and have a great time!</p>"
+          ? "<p id='enjoy_message'></p>"
           : "")
     );
   } else {
@@ -644,6 +607,7 @@ function updateWelcomeText() {
   }
 }
 
+// Function to apply filters
 function applyFilters() {
   let filteredProducts = DB.products;
 
@@ -714,12 +678,12 @@ function applyFilters() {
   showMenu(filteredProducts);
 }
 
-  
-
-//******** STAFF ********
+// Function to call when staff button on landing page is clicked
 function staffIsChosen() {
+// Set the currentSystem to staff and store it in localStorage
   currentSystem = "staff";
   localStorage.setItem("currentSystem", "staff");
+// show and hide necessary elements
   $("#landing").hide();
   $("#menu-container").hide();
   $(".login-btn").hide();
@@ -728,6 +692,7 @@ function staffIsChosen() {
   $("#staff-container").hide();
   $("#filter-section").hide();
   $("#app").show();
+// if the staff members is already logged in, call showStaffMain and if they are not logged in, open the login modal
   if (localStorage.getItem("role") && localStorage.getItem("role") != "3") {
     showStaffMain();
   } else {
@@ -735,42 +700,53 @@ function staffIsChosen() {
   }
 }
 
+// Function to call to show the staff main elements
 function showStaffMain() {
   showFilters();
+// show and hide necessary elements
   $("#staff-container").show();
   $("#filter-section").show();
   $("#welcome-container").show();
   $(".logout-btn").show();
+// show low stock and alert security button
   $(".staff-alert").append(
     `
       <p>
       <i class="fas fa-exclamation-circle"></i>
-      Low Stock: 5 items
+      <span id="low_stock"></span>
       </p>
       <button class="alert-security">
       <i class="fas fa-shield-alt"></i>
-      Alert Security
+      <span id="alert_security_button"></span>
       </button>
     `
   );
+// show the orders list
   updateOrdersList();
   // applyFilters();
+  update_view();
 }
 
+// Function to update the orders list
 function updateOrdersList() {
+// Get the orders list from localStorage
   const ordersList = JSON.parse(localStorage.getItem("orders") || []);
+// Show the orders list
   const ordersListContainer = $(".orders-container");
   ordersListContainer.empty();
-  ordersListContainer.append(`<div class="order-title">Orders List</div>
+  ordersListContainer.append(`<div class="order-title" id="order-title-text"></div>  
   <hr class="hr-style"> </hr>`);
+//  If no orders are found, display a message
   if (ordersList.length == 0) {
     ordersListContainer.append(
       `<div class="empty-text">
-      <p>No current orders to handle. Enjoy the break, and stay ready for when the next order comes in!
+      <p>
+      <span id="no_current_orders"></span>
       </p>
       </div>`
     );
-  } else {
+      } else {
+// Sort the orders list based on the status (pending at the top of the list)
     ordersList.sort((a, b) => {
       if (a.status === "pending" && b.status !== "pending") {
         return -1;
@@ -784,8 +760,11 @@ function updateOrdersList() {
         return 0;
       }
     });
+    updateView();
 
+    // Iterate through the orders list and create elements for each of them
     ordersList.forEach((item) => {
+// define class based on order's status
       if (item.amount > 0) {
         let statusClass;
         let statusIcon;
@@ -798,34 +777,40 @@ function updateOrdersList() {
             statusClass = "order-pending";
             statusIcon = '<i class="fas fa-hourglass-half"></i>';
         }
-
+// Append the order item to the orders list container
         ordersListContainer.append(`
-      <div class="order-item ${statusClass}" data-order_nr="${item.order_nr}">
-      <h4 class="order-type">${
-        item.type === "table"
-          ? `Table ${item.table_number}`
-          : item.type === "bar"
-          ? "Bar"
-          : "Fridge"
-      }
-      <p class="order-number"> #${item.order_nr} </p>
-      </h4>
-      <span class="order-status ${statusClass}">${statusIcon} ${
+        <div class="order-item ${statusClass}" data-order_nr="${item.order_nr}">
+            <h4 class="order-type">
+                ${item.type === "table" 
+                    ? `<span id="table"></span>: ${item.table_number}`
+                    : item.type === "bar"
+                        ? "Bar"
+                        : `<span id="fridge"></span>`
+                }
+                <p class="order-number"> #${item.order_nr} </p>
+            </h4>
+            <span class="order-status ${statusClass}">${statusIcon} ${
           item.status
         } </span>
-      <span class="order-amount">${item.amount} SEK</span>
-      </div>
-      `);
+            <span class="order-amount">${item.amount} SEK</span>
+        </div>
+    `);
       }
     });
   }
+  updateView(); // Corrected to updateView()
 }
 
+// Function to remove an item from an order
 function removeItemFromOrder(orderNr, itemNr) {
+// Get the orders list from localStorage
   const ordersList = JSON.parse(localStorage.getItem("orders") || []);
+// Find the order and the item in the order
   const order = ordersList.find((order) => order.order_nr === orderNr);
   if (order) {
+// Find the item in the order
     const item = order.items.find((item) => item.nr == itemNr);
+// If the item is found and its quantity is more than 1 decrease its quantity by 1, else remove it from the order
     if (item) {
       if (item.quantity > 1) {
         item.quantity -= 1;
@@ -838,11 +823,13 @@ function removeItemFromOrder(orderNr, itemNr) {
       const orderIndex = ordersList.findIndex(
         (order) => order.order_nr === orderNr
       );
+// Update the order's amount
       const totalPrice = order.items.reduce(
         (total, item) => total + item.price * item.quantity,
         0
       );
       order.amount = totalPrice;
+// Update the order in the orders list
       if (orderIndex !== -1) {
         ordersList[orderIndex] = order;
         localStorage.setItem("orders", JSON.stringify(ordersList));
@@ -853,20 +840,23 @@ function removeItemFromOrder(orderNr, itemNr) {
   }
 }
 
+// Function to view an order item in the modal
 function viewOrderItem(orderNr) {
+// Get the orders list from localStorage
   const ordersList = JSON.parse(localStorage.getItem("orders") || []);
+// Find the order in the orders list
   const order = ordersList.find((order) => order.order_nr === orderNr);
   if (order) {
-    // Display the order details
-    $("#order-modal").empty(); // Clear the modal content first
+    $("#order-modal").empty();
+    // Append the order details to the modal
     $("#order-modal").append(
       `<div class="modal-content"> 
-      <h2 class="order-modal-title">Order #${order.order_nr}
+      <h2 class="order-modal-title">
+      ${getTranslation(dictionary.find(item => item.key === 'order_number'), selectedLanguage)} #${order.order_nr}
       <span class="close-icon"><i class="fas fa-times"></i></span>
       </h2>
-      
       <hr class="hr-style"></hr>
-      <label for="items">Items:</label>
+      <label for="items">${getTranslation(dictionary.find(item => item.key === 'items_label'), selectedLanguage)}:</label>
       <div class="order-modal-list">
         ${order.items
           .map(
@@ -881,20 +871,30 @@ function viewOrderItem(orderNr) {
           .join("")}
       </div>
       <hr class="hr-style"></hr>
-      <p class="modal-total">Total Amount:   <span>${
+      <p class="modal-total">${getTranslation(dictionary.find(item => item.key === 'total_amount'), selectedLanguage)}:   <span>${
         order.amount
       } SEK</span></p>
       </div>`
     );
     $("#order-modal").show();
   } else {
+// If the order is not found, show an alert
     alert("Order not found");
   }
 }
 
-// **********************
+// Initializes event listeners for various user actions
+// - Toggling user roles between customer and staff.
+// - Logging out and clearing user-specific UI states.
+// - Filtering products based on type, dietary restrictions, search queries, and sorting preferences.
+// - Managing the shopping cart, including adding and removing items.
+// - Enabling drag-and-drop functionality for adding items to and removing items from the cart.
+// - Viewing detailed order items and closing order modals.
+// - Removing items from orders and alerting security.
+// This comprehensive setup ensures responsive and interactive UI components throughout the app.
 
 function callEventListeners() {
+// Handling entry into the pub as a customer, showing the app UI and initializing UI states
   $("#enter-pub").on("click", function () {
     currentSystem = "customer";
     localStorage.setItem("currentSystem", "customer");
@@ -903,72 +903,82 @@ function callEventListeners() {
     $("#app").show();
     showFilters();
     updateWelcomeText();
-    fetchCart();
+    updateCartUI();
     updateServiceOptions();
     $("#menu-container").show();
   });
 
+// event listener for opening the login modal for customer login
   $(".login-btn").on("click", function () {
     openLogin();
   });
 
+// event listener for clicks on the "choose-staff" button, triggering the staffIsChosen function to switch the user interface to staff mode
   $("#choose-staff").on("click", function () {
     staffIsChosen();
   });
 
+// event listener for logging out
   $(".logout-btn").on("click", function () {
     logout();
   });
 
+// event listener for filtering products
   $(".filter-buttons .secondary-btn").on("click", function () {
     currentFilters.type = $(this).text();
     applyFilters();
   });
 
-  // Event listener for checkbox changes
+  // event listener for checkbox changes on gluten free
   $(".gluten").on("change", function () {
     currentFilters.isGlutenFree = this.checked;
     applyFilters();
   });
 
+// event listener for checkbox changes on tannin free
   $(".tannin").on("change", function () {
     currentFilters.isTanninFree = this.checked;
     applyFilters();
   });
 
+// event listener for checkbox changes on organic
   $(".organic").on("change", function () {
     currentFilters.isOrganic = this.checked;
     applyFilters();
   });
 
+// event listener for checkbox changes on kosher
   $(".kosher").on("change", function () {
     currentFilters.isKosher = this.checked;
     applyFilters();
   });
 
+// event listener for input changes on search bar
   $(".search-bar").on("input", function () {
     currentFilters.search = $(this).val();
     applyFilters();
   });
 
+// event listener for changes on sort by dropdown
   $(".sortby").on("change", function () {
     currentFilters.sort = $(this).val();
     applyFilters();
   });
 
+// event listener for removing items from the cart
   $(".cart-container").on("click", ".remove-icon", function () {
     const itemNr = $(this).data("nr");
     removeFromCart(itemNr);
   });
 
-  // For drag over
+  // event listener for dragging items to the cart
   $(".cart-container").on("dragover", function (e) {
     e.preventDefault(); // This allows us to drop.
   });
 
-  // For drop
+  // event listener for dropping items to the cart
   $(".cart-container").on("drop", function (e) {
-    e.preventDefault(); // Prevent default action (open as link for some elements)
+    e.preventDefault(); // Prevent default action
 
     // Get the id of the product being dragged
     const productId = e.originalEvent.dataTransfer.getData("text");
@@ -989,26 +999,30 @@ function callEventListeners() {
     e.preventDefault(); // Allow drop
   });
 
+// For drop from cart
   $(".products").on("drop", function (e) {
     e.preventDefault();
     const itemNr = e.originalEvent.dataTransfer.getData("text");
     removeFromCart(itemNr);
   });
 
-  // Event listener for when the service option changes
+  // event listener for when the service option changes
   $("input[name='service']").change(function () {
     toggleTableNumberInput();
   });
 
+// event listener for clicking on an order item to open its modal (in staff view)
   $(document).on("click", ".order-item", function (event) {
     const orderNr = $(this).data("order_nr");
     viewOrderItem(orderNr);
   });
 
+// event listener for closing the order modal (in staff view)
   $(document).on("click", ".close-icon", function (event) {
     $("#order-modal").hide();
   });
 
+// event listener for removing an item from an order in order modal (in staff view)
   $(document).on("click", ".order-modal-remove", function () {
     const orderNr = $(this).data("order_nr");
     const itemNr = $(this).data("item_nr");
@@ -1016,168 +1030,52 @@ function callEventListeners() {
   });
 
   $(document).on("click", ".alert-security", function (event) {
-    alert("Security has been alerted!");
+    const alertMessage = getTranslation(
+      dictionary.find(item => item.key === 'alert_security'),
+      selectedLanguage
+    );
+    alert(alertMessage);
   });
 }
 
+// Variable to store the selected language
+let selectedLanguage ='en'; // Default to English 
 
+// Function to update the UI based on the selected language
 
-// -------------
+function updateView() {
+  for (const item of dictionary) {
+    const element = document.getElementById(item.key);
+    if (element) {
+      element.textContent = getTranslation(item, selectedLanguage);
+    }
+  }
+}
 
+// Function to get the translation based on the selected language
+function getTranslation(item, lang) {
+  switch (lang) {
+    case 'en':
+      return item.en; // English translation
+    case 'sv':
+      return item.sv; // Swedish translation
+    case 'de':
+      return item.de; // German translation
+    default:
+      return item.en; // Fallback to English if translation is not available in the selected language
+  }
+}
 
-
-// // Function to remove a product from the shopping cart
-// function removeFromCart(nr) {
-//   const itemIndex = cart.findIndex((item) => item.nr == nr);
-
-//   if (itemIndex > -1) {
-//     if (cart[itemIndex].quantity > 1) {
-//       cart[itemIndex].quantity -= 1; // Decrease the item's quantity by 1 if more than 1
-//     } else {
-//       cart.splice(itemIndex, 1); // Remove the item from the cart if quantity is 1
-//     }
-//     // Update the cart UI to reflect the changes
-//     updateCartUI(renderUndoArrow); // Pass renderUndoArrow as a callback
-//     addItemBackToCart(item); // Add the inverse of the undone action to the redo stack
-//   }
-// }
-
-//  // Function to add the inverse of the undone action to the undo stack when an item is removed from the cart
-//  function addItemBackToCart(item) {
-//   const addAction = () => { // Undo action
-//     redoStack.push(redoAction); // Push the redoAction to the redo stack
-//     updateCartUI(renderUndoArrow); // Update cart UI after adding back
-//   };
-//   redoStack.push(addAction); // Push the addAction to the redo stack
-// }
-
-// //functions toadd item back to cart and unclear cart should add actions to undo stack
-
-// // Function to clear the shopping cart
-// function clearCart() {
-//   cart = [];
-//   updateCartUI(renderUndoArrow); // Pass renderUndoArrow as a callback
-//   addItemBackToCart(redoAction);
-// }
-
-// function unClearCart(redoAction) {
-//   redoAction(); // Execute the redoAction within this function
-//   updateCartUI(renderUndoArrow); // Update cart UI after adding back
-// }
-
-
-
-// --------
-
-
-
-
- 
-
-  // function addItemBackToCart(redoAction) {
-  //   redoAction(); // Execute the redoAction within this function
-  //   updateCartUI(renderUndoArrow); // Update cart UI after adding back
-  // }
-
-
+// Event listener for language selection change
+$("#languageSelect").on("change", function () {
+  // Update the selected language variable and store it in local storage
+  selectedLanguage = $(this).val();
+  localStorage.setItem('selectedLanguage', selectedLanguage);
   
+  // Update the UI with the new language
+  updateView();
+});
 
+// Update the UI with the initial language selection
+updateView();
 
-
-  // -----------
-
-    
-  // Undo function
-  // function undo() {
-  // if (undoStack.length > 0) {
-  // const undoAction = undoStack.pop();
-  // undoAction();
-  // redoStack.push(undoAction);
-  // console.log('Redo Stack:', redoStack, );
-  // console.log('obj undo: ' + undoAction);
-  // updateCartUI(renderUndoArrow); // Pass renderUndoArrow as a callback
-
-  // }
-  // // updateCartUI(renderUndoArrow); // Pass renderUndoArrow as a callback
-  // }
-
-
-
-
-  // ----------------
-
-
-
-
-
-// // Function to remove a product from the shopping cart
-// function removeFromCart(nr) {
-//   const itemIndex = cart.findIndex((item) => item.nr == nr);
-
-//   if (itemIndex > -1) {
-//     const removedItem = cart[itemIndex]; // Store the removed item
-//     if (removedItem.quantity > 1) {
-//       removedItem.quantity -= 1; // Decrease the item's quantity by 1 if more than 1
-//     } else {
-//       cart.splice(itemIndex, 1); // Remove the item from the cart if quantity is 1
-//     }
-//     // Update the cart UI to reflect the changes
-//     updateCartUI(renderUndoArrow); // Pass renderUndoArrow as a callback
-//     addItemBackToCart(redoAddItemToCart(removedItem));
-//   }
-// }
-
-// // Function to redo adding an item back to the cart
-// function redoAddItemToCart(item) {
-//   const redoAction = () => {
-//     cart.push(item); // Add the item back to the cart
-//   };
-//   return redoAction;
-// }
-
-// // Function to add the inverse of the undone action to the undo stack when an item is removed from the cart
-// function addItemBackToCart(item, action) {
-//   const addAction = () => { // Undo action
-//     undoStack.push(action); // Push the redoAction to the undo stack
-//     updateCartUI(renderUndoArrow); // Update cart UI after adding back
-//   };
-//   undoStack.push(addAction); // Push the addAction to the undo stack
-// }
-
-// // Function to clear the shopping cart
-// function clearCart() {
-//   const clearedCart = [...cart]; // Make a copy of the current cart
-//   cart = [];
-//   updateCartUI(renderUndoArrow); // Pass renderUndoArrow as a callback
-//   addItemBackToCart(redoClearCart(clearedCart)); // Add redo action to the redo stack
-// }
-
-// // Function to redo clearing the cart
-// function redoClearCart(clearedCart) {
-//   const redoAction = () => {
-//     cart = [...clearedCart]; // Restore the cart to its previous state
-//   };
-//   return redoAction;
-// }
-
-// // Function to add the inverse of the cleared action to the undo stack when the cart is cleared
-// function unClearCart(items, action) {
-//   const addAction = () => { // Undo action
-//     items.forEach(item => cart.push(item)); // Restore the items to the cart
-//     undoStack.push(action); // Push the redoAction to the undo stack
-//     updateCartUI(renderUndoArrow); // Update cart UI after adding back
-//   };
-//   undoStack.push(addAction); // Push the addAction to the undo stack
-// }
-
-
-
-// ---------------
-
-// Function to redo adding an item back to the cart
-// function redoAddItemToCart(item) {
-//   const redoAction = () => {
-//     cart.push(item); // Add the item back to the cart
-//   };
-//   return redoAction;
-// }

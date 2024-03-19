@@ -52,9 +52,9 @@
         <!-- parent div for VIP login and logout buttons -->
         <div class="login">
           <!-- VIP login button -->
-          <button class="primary-btn login-btn">VIP Login</button>
+          <button class="primary-btn login-btn" id="vip_login"></button>
           <!-- Logout button -->
-          <button class="primary-btn logout-btn">Log Out</button>
+          <button class="primary-btn logout-btn" id="log_out"></button>
         </div>
         <!-- parent div for logo  -->
         <div class="logo">
@@ -64,7 +64,11 @@
         <!-- parent div for languages -->
         <div class="lang">
           <!-- language icon  -->
-          <span class="material-symbols-outlined">language</span>
+          <select id="languageSelect">
+            <option id="en" value="en"selected>English</option>
+            <option id="sv" value="sv">Svenska</option>
+            <option id="de" value="de">Deutsch</option>
+          </select>         
         </div>
       </div>
       <!-- div container for welcome text -->
@@ -86,25 +90,25 @@
             <div class="gluten-checkbox">
               <input type="checkbox" class="gluten" />
               <span class="checkmark"></span>
-              Gluten Free
+              <span id="gluten_free"></span>
             </div>
             <!-- checkbox for selecting tannin-free option -->
             <div class="tannin-checkbox">
               <input type="checkbox" class="tannin" />
               <span class="checkmark"></span>
-              Tannin Free
+              <span id="tannin_free"></span>
             </div>
             <!-- checkbox for selecting organic option -->
             <div class="organic-checkbox">
               <input type="checkbox" class="organic" />
               <span class="checkmark"></span>
-              Organic
+              <span id="organic"></span>
             </div>
             <!-- checkbox for selecting kosher option -->
             <div class="kosher-checkbox">
               <input type="checkbox" class="kosher" />
               <span class="checkmark"></span>
-              Kosher
+              <span id="kosher"></span>
             </div>
           </div>
         </div>
@@ -115,17 +119,17 @@
           <!-- parent div for search input -->
           <div class="search-bar-container">
             <!-- search input -->
-            <input type="text" placeholder="Search..." class="search-bar" />
+                      <input type="text" placeholder="Search..." class="search-bar" />
           </div>
           <!-- parent div for filtering dropdown -->
           <div class="sort-dropdown">
             <!-- dropdown menu for sorting options -->
             <select name="sortby" class="sortby">
-              <option value="featured">All</option>
-              <option value="price_low_high">Price: Low to High</option>
-              <option value="price_high_low">Price: High to Low</option>
-              <option value="alcohol_low_high">Alcohol: Low to High</option>
-              <option value="alcohol_high_low">Alcohol: High to Low</option>
+              <option value="featured" id="all2"></option>
+              <option value="price_low_high" id="price_low_to_high"></option>
+              <option value="price_high_low" id="price_high_to_low"></option>
+              <option value="alcohol_low_high" id="alcohol_low_to_high"></option>
+              <option value="alcohol_high_low" id="alcohol_high_to_low"></option>
             </select>
           </div>
         </div>
@@ -137,11 +141,7 @@
           <!-- parent div for list of products -->
           <div class="products"></div>
           <!-- parent div for cart -->
-          <div class="cart-container">
-            <div id="undo">
-              <span id="undo-button" class="material-icons">undo</span>
-              </div>
-          </div>
+          <div class="cart-container"></div>
         </div>
         <!-- parent div for payment modal -->
         <div class="modal-container" id="payment-modal-container">
