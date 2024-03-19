@@ -329,7 +329,7 @@
 /* style for each product item */
 .product-item {
   width: calc(33.333% - 10px);
-  height: 12rem !important;
+  height: 15rem !important;
   background-color: var(--primary-color);
   margin: 0 5px 5px 0;
   color: var(--white-color);
@@ -352,7 +352,7 @@
   margin-left: 10px;
   margin-top: 10px;
   margin-bottom: 10px;
-  font-size: 20px;
+  font-size: 22px;
   align-items: center;
   height: 80px;
 }
@@ -365,7 +365,7 @@
 
 /* style for image in product item */
 .product-item .product-image {
-  width: 70px;
+  width: 80px;
   filter: invert(100%);
   margin-right: 10px;
   flex-shrink: 0;
@@ -464,7 +464,6 @@
   margin: 10px 15px 15px 5px;
   min-height: 100vh;
   max-height: 800px;
-  position: relative;
 }
 
 /* enable scroll for orders list container */
@@ -572,30 +571,7 @@
   margin: 8px;
   border-top: 2px solid var(--primary-color);
 }
-
-
-/* ***********UNDO (Customers)************* */
-.undo-icon {
-cursor: pointer;
-color: var(--primary-color); /* Change the color according to your design */
-font-size: 24px; /* Adjust the font size as needed */
-transition: color 0.3s ease; /* Add a smooth transition for hover effect */
-position: absolute;
-top: 10px;
-right: 10px;
-}
-
-
-.undo-icon:hover {
-color: #666; /* Change the color on hover */
-}
-
-
-.disabled {
-pointer-events: none; /* Disable pointer events */
-opacity: 0.5; /* Reduce opacity to make it appear grayed out */
-}
-
+/* ******************************* */
 
 /* ***********ORDERS (Staff)************* */
 /* style for each order item in orders list */
@@ -652,221 +628,15 @@ opacity: 0.5; /* Reduce opacity to make it appear grayed out */
   margin-bottom: 5px;
 }
 
-
-
-
-/* //////////////////////////  TABLET  ////////////////////////// */
-
-/* Tablet styles */
-@media only screen and (max-width: 768px) {
-  /* Adjustments for tablet screens */
-
-  /* Smaller font size for landing page text */
-  .landing-container .welcome {
-    font-size: 36px;
-  }
-
-  .landing-container .pub-name {
-    font-size: 30px;
-  }
-
-  /* Smaller font size for buttons */
-.primary-btn,
-.secondary-btn {
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-/* Smaller font size for filtering checkboxes */
-.filter-checkboxes span {
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-  /* Smaller font size for buttons */
-  .landing-btn {
-    width: 8rem;
-    height: 3.5rem;
-    font-size: 16px;
-  }
-
-
-  /* Flexbox layout for header items */
-  #header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px; /* Add padding to create space around the elements */
-  }
-  
-  /* Style for the logo */
-  /* .logo {
-    margin-right: auto;
-    margin-left: auto;
-  } */
-  
-  /* Style for the login */
-  .login {
-    margin-right: auto; /* Pushes the login button to the left */
-  }
-  
-  /* Style for the language */
-  .lang {
-    margin-left: auto; /* Pushes the language button to the right */
-  }
-  /* Adjust the width of modal content */
-  .modal-content {
-    width: 90%;
-  }
-
-  /* Smaller font size for language icon */
-  #header .lang .material-symbols-outlined {
-    font-size: 30px;
-  }
-
-  /* Adjust the width of modal content */
-  .modal-content {
-    width: 90%;
-  }
-  .products {
-    max-width: 50%;
-    padding: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    flex-grow: 1;
-  }
-  /* Adjust the size of product items */
-  .product-item {
-    width: calc(50% - 40px);
-    margin: 10px;
-    height: auto !important;
-    font-size: 14px; /* Adjust the font size as needed */
-  }
-
-  .product-item .product-image {
-    width: 50px;
-    filter: invert(100%);
-    margin-right: 5px;
-    flex-shrink: 0;
-  }
-
-  .product-info h3 {
-    font-size: 16px; /* Adjust the font size as needed */
-  }
-  /* Adjust the font size of product info */
-  .product-info {
-    font-size: 14px; /* Adjust the font size as needed */
-  }
-
-  /* Adjust the font size of bottom info */
-  .bottom-info p {
-    font-size: 12px; /* Adjust the font size as needed */
-  }
-
-  .filter-1,
-  .filter-checkboxes {
-    font-size: 14px; /* Adjust the font size as needed */
-  }
-
-
-  /* Flexbox layout for checkboxes and text */
-  .filter-checkboxes div {
-    display: flex;
-    align-items: center; /* Align items vertically */
-    margin-bottom: 5px; /* Add some spacing between each checkbox and text */
-  }
-
-  /* Adjust the margin between checkbox and text */
-  .filter-checkboxes input[type="checkbox"] {
-    margin-right: 10px; /* Adjust as needed */
-  }
-
-  /* Make text smaller for filtering checkboxes */
-  .filter-checkboxes span {
-    font-size: 14px; /* Adjust the font size as needed */
-  }
-
-  .cart-container,
-  .orders-container {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--gray-color);
-    flex: 1;
-    max-width: 50%;
-    padding: 15px;
-    border-radius: 10px;
-    margin: 10px 15px 15px 5px;
-    min-height: 100vh;
-    max-height: 800px;
-    position: relative;
-  }
-  /* style for title in cart container and orders container */
-.cart-container .order-title,
-.orders-container .order-title {
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
-  color: var(--primary-color);
-}
-
-/* style for empty text in cart container and orders container*/
-.cart-container .empty-text,
-.orders-container .empty-text {
-  text-align: center;
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--primary-color);
-}
-
-/* style for each item in cart */
-.cart-container .cart-item {
-  color: var(--primary-color);
-  margin-left: 10px;
-  padding: 4px;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-}
-
-/* style for each item price in cart */
-.cart-container .cart-item .item-price {
-  margin-left: auto;
-}
-
-/* style for remove item icon in cart */
-.cart-container .cart-item .remove-icon {
-  margin-left: 5px;
-  font-size: 16px;
-  color: var(--red-color);
-  cursor: pointer;
-}
-/* .filter-2 {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-end;
-  margin-right: 10px;
-} */
-
-/* style for searchbar input */
-.search-bar {
+#languageSelect {
+  z-index: 2;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 0.5em;
+  border-radius: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
   position: relative;
-  width: 20rem;
-  padding-right: 40px;
-  padding: 6px;
-  border-radius: 10px;
-  background-color: var(--gray-color);
-  border: none;
-  font-size: 12px;
-  margin-top: 12px;
-}
-
-/* style for sorting dropdown */
-.sort-dropdown .sortby {
-  margin-top: 5px;
-  width: 18rem;
-  padding: 8px;
-  border-radius: 10px;
-  background-color: var(--gray-color);
-  border: none;
-  font-size: 12px;
-}
+  left: -47px;
+  top: 7px;
 }
