@@ -26,7 +26,8 @@ $(document).ready(function () {
   checkAuthentication();
   updateWelcomeText();
   setOrdersInStorage();
-updateServiceOptions();
+  updateServiceOptions();
+  renderUndoArrow();
   // Listens for changes on service input fields and calls toggleTableNumberInput function
   $(document).on("change", "input[name='service']", function () {
     toggleTableNumberInput();
@@ -202,22 +203,118 @@ function addToCart(nr, name, price) {
   } else {
     cart.push({ nr, name, price, quantity: 1 }); // If the item is not in the cart, add it as a new item
   }
-  // Update the cart UI to reflect the changes
-  updateCartUI();
+ // const undoAction = () => unAddToCart({ nr, name, price }); // Define the undo action
+ const undoAction = () => unAddToCart({ nr }); // Define the undo action
+ undoStack.push(undoAction); // Push the undo action to the undo stack
+
+ // Update the cart UI to reflect the changes
+ updateCartUI(renderUndoArrow); // Pass renderUndoArrow as a callback
+ console.log('Item added to cart:', { nr, name, price });
+ console.log('Updated cart:', cart);
+ console.log('Undo Stack:', undoStack);
+}
+
+
+// Function to undo the add to cart action
+function unAddToCart(item) {
+ const undoAction = () => removeFromCart(item.nr); // Remove the item from the cart
+ undoAction(); // Execute the undo action immediately
+ undoStack.pop(); // Remove the undo action from the undo stack
+ console.log('unadded item:', item.nr);
+}
+
+// Function to remove a product from the shopping cart
+function removeFromCart(nr) {
+ const itemIndex = cart.findIndex((item) => item.nr == nr);
+
+ if (itemIndex > -1) {
+   const removedItem = cart[itemIndex]; // Store the removed item
+   if (removedItem.quantity > 1) {
+     removedItem.quantity -= 1; // Decrease the item's quantity by 1 if more than 1
+   } else {
+     cart.splice(itemIndex, 1); // Remove the item from the cart if quantity is 1
+   }
+   const undoAction = () => unRemoveFromCart(removedItem); // Define the undo action
+   undoStack.push(undoAction); // Push the undo action to the undo stack
+
+   // Update the cart UI to reflect the changes
+   updateCartUI(renderUndoArrow); // Pass renderUndoArrow as a callback
+   console.log('Item removed from cart:', removedItem);
+   console.log('Updated cart:', cart);
+ }
+}
+
+// Undo action: remove item from cart
+function unRemoveFromCart(item) {
+ const undoAction = () => {
+   cart.push(item); // Restore the item to the cart
+   updateCartUI(renderUndoArrow); // Update the cart UI
+ };
+ undoAction(); // Execute the undo action immediately
+}
+
+// Function to clear the shopping cart
+function clearCart() {
+  const clearedCart = [...cart]; // Make a copy of the current cart
+  cart = [];
+  updateCartUI(renderUndoArrow); // Pass renderUndoArrow as a callback
+  unClearCart(clearedCart); // Add undo action to the undo stack
+}
+
+// Function to add the inverse of the cleared action to the undo stack when the cart is cleared
+function unClearCart(items) {
+  const undoAction = () => {
+    items.forEach(item => cart.push(item)); // Restore the items to the cart
+  };
+  undoStack.push(undoAction); // Push the undoAction to the undo stack
+}
+
+
+//// UNDO Implementation
+let undoStack = [];
+
+function renderUndoArrow() {
+  const orderTitle = $(".order-title");
+
+  // Create undo arrow element
+  const undoArrow = $("<button>")
+  .addClass("material-icons undo-icon")
+  .text("undo")
+  .on("click", function () {
+    if (undoStack.length > 0) {
+      const undoAction = undoStack.pop(); // Pop the last undo action from the undo stack
+      undoAction(); // Call the undo action directly
+      updateCartUI(renderUndoArrow); // Update the cart UI after undoing action
+    }
+  });
+
+  // Append both arrows to the orderTitle element
+  orderTitle.append(undoArrow);
+
+  // Check if the undo stack is empty and adjust the styling accordingly
+  if (undoStack.length === 0) {
+  undoArrow.addClass("disabled"); // Add a disabled class
+  }
+  else{
+  undoArrow.removeClass("disabled");
+  }
 }
 
 // Function to update the shopping cart UI
-function updateCartUI() {
+function updateCartUI(callback) {
   const cartContainer = $(".cart-container");
   cartContainer.empty();
-  cartContainer.append(`<div class="order-title" id="order_summary"></div>
-  <hr class="hr-style"> </hr>`);
-// If the cart is empty, display a message
+
+  // Append the order title
+  cartContainer.append(`<div class="order-title" id="order_summary"></div>`);
+  cartContainer.append(`<hr class="hr-style"> </hr>`);
+
+  // If the cart is empty, display a message
   if (cart.length == 0) {
     cartContainer.append(
       `<div class="empty-text">
-      <p id="empty-cart"></p>
-      <p id="add_products_instruction"></p>
+        <p id="empty-cart"></p>
+        <p id="add_products_instruction"></p>
       </div>`
     );
   } else {
@@ -225,76 +322,74 @@ function updateCartUI() {
     cartContainer.append(`<ul class="cart-items"></ul>`);
     cart.forEach((item) => {
       $(".cart-items").append(`
-      <li class="cart-item" draggable="true" data-nr="${item.nr}">
-      ${item.quantity}x ${item.name}
-      <p class="item-price"> ${item.price}SEK </p>
-      <span class="material-icons remove-icon" data-nr="${item.nr}">cancel</span>
-      </li>
+        <li class="cart-item" draggable="true" data-nr="${item.nr}">
+          ${item.quantity}x ${item.name}
+          <p class="item-price"> ${item.price}SEK </p>
+          <span class="material-icons remove-icon" data-nr="${item.nr}">cancel</span>
+        </li>
       `);
     });
-    // append the service options (table, bar or fridge), total amount, and buttons
-    cartContainer.append(`
+  }
+
+  // Append the service options, total amount, and buttons
+  cartContainer.append(`
     <div class="bottom-section">
-    <div class="service-options">
-      <label>
-      <input type="radio" name="service" value="table">
-      <span id="table_service"></span>
-      </label>
-      <label>
-      <input type="radio" name="service" value="bar">
-      <span id="bar_pick_up"></span>
-      </label>
+      <div class="service-options">
+        <label>
+          <input type="radio" name="service" value="table">
+          <span id="table_service"></span>
+        </label>
+        <label>
+          <input type="radio" name="service" value="bar">
+          <span id="bar_pick_up"></span>
+        </label>
+      </div>
+      <div class="table-number" style="display: none;">
+        <label for="table-number" id="table_number_label"></label>
+        <input type="text" id="table-number" name="table-number">
+      </div>
+      <div class="total-section">
+        <span id="total"></span>
+        <span class="total-price">${updateTotalPriceDisplay()}</span>
+      </div>
+      <div class="cart-buttons">
+        ${
+          localStorage.getItem("role") == 3
+            ? `<button type="button" id="submit-vip" class="secondary-btn">
+                <span id="submit-vip-text"></span>
+              </button>`
+            : `<button type="button" id="place-order" class="secondary-btn">
+                <span id="place-order-text"></span>
+              </button>`
+        }
+        <button type="button" id="clear-cart" class="red-btn">
+          <span id="clear-cart-text"></span>
+        </button>
+      </div>
     </div>
-    <div class="table-number" style="display: none;">
-    <label for="table-number" id="table_number_label"></label>
-    <input type="text" id="table-number" name="table-number">
-    </div>
-
-    <div class="total-section">
-      <span id="total"></span>
-      <span class="total-price">${updateTotalPriceDisplay()}</span>
-    </div>
-    
-    <div class="cart-buttons">
-      ${
-        localStorage.getItem("role") == 3
-          ? `<button type="button" id="submit-vip" class="secondary-btn">
-              <span id="submit-vip-text"></span>
-            </button>`
-          : `<button type="button" id="place-order" class="secondary-btn">
-              <span id="place-order-text"></span>
-            </button>`
-      }
-      <button type="button" id="clear-cart" class="red-btn">
-        <span id="clear-cart-text"></span>
-      </button>
-    </div>
-  </div>
   `);
-  
 
-  // Event listener for clear-cart button
+  // Event listeners for buttons
   $("#clear-cart").on("click", function () {
     clearCart();
   });
 
-// Event listener for submit-vip button
   $("#submit-vip").on("click", function () {
     openPayment();
   });
 
-// Event listener for place-order button
   $("#place-order").on("click", function () {
     placeOrder();
   });
 
-  // functions to call when the cart is updated
-    // update the service options
+  // Update service options, total amount, and display of total amount
   updateServiceOptions();
-// update the total amount
   updateTotalPrice();
-// update the display of total amount
   updateTotalPriceDisplay();
+
+  // Call the callback function if provided
+  if (typeof callback === 'function') {
+    callback();
   }
 }
 
@@ -318,20 +413,6 @@ function updateTotalPriceDisplay() {
   const totalPriceElement = document.querySelector(".total-price");
   if (totalPriceElement) {
     totalPriceElement.textContent = `${updateTotalPrice()} SEK`;
-  }
-}
-
-// Function to remove a product from the cart
-function removeFromCart(nr) {
-// Find the index of the item in the cart
-  const itemIndex = cart.findIndex((item) => item.nr == nr);
-  if (itemIndex > -1) {
-    if (cart[itemIndex].quantity > 1) {
-      cart[itemIndex].quantity -= 1; // Decrease the item's quantity by 1 if more than 1
-    } else {
-      cart.splice(itemIndex, 1); // Remove the item from the cart if quantity is 1
-    }
-    updateCartUI(); // Update the cart UI to reflect the changes
   }
 }
 
@@ -439,12 +520,6 @@ function openPayment() {
   });
     // Update language translations
     updateView();
-}
-
-// Function to clear the cart
-function clearCart() {
-  cart = [];
-  updateCartUI();
 }
 
 // Function to open the login modal
